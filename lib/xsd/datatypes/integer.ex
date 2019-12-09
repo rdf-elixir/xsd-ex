@@ -6,7 +6,7 @@ defmodule XSD.Integer do
   use XSD.Datatype, id: "integer"
 
   @impl XSD.Datatype
-  def lexical_mapping(lexical) do
+  def lexical_mapping(lexical, _) do
     case Integer.parse(lexical) do
       {integer, ""} -> integer
       {_, _} -> @invalid_value
@@ -15,7 +15,7 @@ defmodule XSD.Integer do
   end
 
   @impl XSD.Datatype
-  def elixir_mapping(value)
-  def elixir_mapping(value) when is_integer(value), do: value
-  def elixir_mapping(_), do: @invalid_value
+  def elixir_mapping(value, _)
+  def elixir_mapping(value, _) when is_integer(value), do: value
+  def elixir_mapping(_, _), do: @invalid_value
 end

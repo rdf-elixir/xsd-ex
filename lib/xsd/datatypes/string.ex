@@ -6,8 +6,8 @@ defmodule XSD.String do
   use XSD.Datatype, id: "string"
 
   @impl XSD.Datatype
-  def lexical_mapping(lexical), do: to_string(lexical)
+  def lexical_mapping(lexical, _), do: to_string(lexical)
 
   @impl XSD.Datatype
-  def elixir_mapping(value), do: to_string(value)
+  def elixir_mapping(value, _), do: to_string(value)
 end

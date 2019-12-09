@@ -37,12 +37,12 @@ defmodule XSD.Datatype do
   @doc """
   A mapping from the lexical space of a `XSD.Datatype` into its value space.
   """
-  @callback lexical_mapping(String.t()) :: any
+  @callback lexical_mapping(String.t(), Keyword.t()) :: any
 
   @doc """
   A mapping from Elixir values into the value space of a `XSD.Datatype`.
   """
-  @callback elixir_mapping(any) :: any
+  @callback elixir_mapping(any, Keyword.t()) :: any
 
   @doc """
   Returns the standard lexical representation for a value of the value space of a `XSD.Datatype`.
@@ -76,14 +76,14 @@ defmodule XSD.Datatype do
       def new(value, opts \\ [])
 
       def new(lexical, opts) when is_binary(lexical) do
-        case lexical_mapping(lexical) do
+        case lexical_mapping(lexical, opts) do
           @invalid_value -> build_invalid(lexical, opts)
           value -> build_valid(value, lexical, opts)
         end
       end
 
       def new(value, opts) do
-        case elixir_mapping(value) do
+        case elixir_mapping(value, opts) do
           @invalid_value -> value |> invalid_value_lexical() |> build_invalid(opts)
           value -> build_valid(value, nil, opts)
         end

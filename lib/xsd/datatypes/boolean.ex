@@ -6,7 +6,7 @@ defmodule XSD.Boolean do
   use XSD.Datatype, id: "boolean"
 
   @impl XSD.Datatype
-  def lexical_mapping(lexical) do
+  def lexical_mapping(lexical, _) do
     with lexical do
       cond do
         lexical in ~W[true 1] -> true
@@ -17,9 +17,9 @@ defmodule XSD.Boolean do
   end
 
   @impl XSD.Datatype
-  def elixir_mapping(value)
-  def elixir_mapping(value) when is_boolean(value), do: value
-  def elixir_mapping(1), do: true
-  def elixir_mapping(0), do: false
-  def elixir_mapping(_), do: @invalid_value
+  def elixir_mapping(value, _)
+  def elixir_mapping(value, _) when is_boolean(value), do: value
+  def elixir_mapping(1, _), do: true
+  def elixir_mapping(0, _), do: false
+  def elixir_mapping(_, _), do: @invalid_value
 end
