@@ -50,6 +50,14 @@ defmodule XSD.Datatype do
   @callback canonical_mapping(any) :: String.t()
 
   @doc """
+  Returns the lexical representation to be used as for a `XSD.Datatype`.
+
+  If the lexical representation for a given `value` and `lexical` should be the
+  canonical one, an implementation should return `nil`.
+  """
+  @callback init_lexical(any, String.t(), Keyword.t()) :: String.t()
+
+  @doc """
   Produces the lexical representation of an invalid value.
 
   The default implementation of the `_using__` macro just returns `to_string/1`
@@ -100,17 +108,18 @@ defmodule XSD.Datatype do
       end
 
       @doc false
-      def build_valid(value, lexical, opts)
-
-      def build_valid(value, nil, opts), do: %__MODULE__{value: value}
-
       def build_valid(value, lexical, opts) do
         if Keyword.get(opts, :canonicalize) do
-          build_valid(value, nil, opts)
+          %__MODULE__{value: value}
         else
+          initial_lexical = init_lexical(value, lexical, opts)
+
           %__MODULE__{
             value: value,
-            uncanonical_lexical: unless(lexical == canonical_mapping(value), do: lexical)
+            uncanonical_lexical:
+              if(initial_lexical && initial_lexical != canonical_mapping(value),
+                do: initial_lexical
+              )
           }
         end
       end
@@ -131,6 +140,11 @@ defmodule XSD.Datatype do
       def canonical_mapping(value), do: to_string(value)
 
       @impl unquote(__MODULE__)
+      def init_lexical(value, lexical, opts)
+      def init_lexical(_value, nil, _opts), do: nil
+      def init_lexical(_value, lexical, _opts), do: lexical
+
+      @impl unquote(__MODULE__)
       def invalid_value_lexical(value), do: to_string(value)
 
       @impl unquote(__MODULE__)
@@ -149,7 +163,7 @@ defmodule XSD.Datatype do
       def valid?(_), do: true
 
       defoverridable canonical_mapping: 1,
-                     build_valid: 3,
+                     init_lexical: 3,
                      invalid_value_lexical: 1
     end
   end
