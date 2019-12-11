@@ -39,10 +39,10 @@ defmodule XSD.Double do
   def elixir_mapping(_, _), do: @invalid_value
 
   @impl XSD.Datatype
-  def init_lexical(value, lexical, opts)
-  def init_lexical(value, nil, _opts) when is_atom(value), do: nil
-  def init_lexical(value, nil, _opts), do: decimal_form(value)
-  def init_lexical(value, lexical, _opts), do: lexical
+  def init_valid_lexical(value, lexical, opts)
+  def init_valid_lexical(value, nil, _) when is_atom(value), do: nil
+  def init_valid_lexical(value, nil, _), do: decimal_form(value)
+  def init_valid_lexical(_, lexical, _), do: lexical
 
   defp decimal_form(float), do: to_string(float)
 

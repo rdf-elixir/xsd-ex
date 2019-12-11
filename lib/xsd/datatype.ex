@@ -55,7 +55,7 @@ defmodule XSD.Datatype do
   If the lexical representation for a given `value` and `lexical` should be the
   canonical one, an implementation should return `nil`.
   """
-  @callback init_lexical(any, String.t(), Keyword.t()) :: String.t()
+  @callback init_valid_lexical(any, String.t(), Keyword.t()) :: String.t()
 
   @doc """
   Produces the lexical representation of an invalid value.
@@ -63,7 +63,7 @@ defmodule XSD.Datatype do
   The default implementation of the `_using__` macro just returns `to_string/1`
   representation of the value.
   """
-  @callback invalid_value_lexical(any) :: String.t()
+  @callback init_invalid_lexical(any, Keyword.t()) :: String.t()
 
   defmacro __using__(opts) do
     id = Keyword.fetch!(opts, :id) |> iri()
@@ -92,7 +92,7 @@ defmodule XSD.Datatype do
 
       def new(value, opts) do
         case elixir_mapping(value, opts) do
-          @invalid_value -> value |> invalid_value_lexical() |> build_invalid(opts)
+          @invalid_value -> build_invalid(value, opts)
           value -> build_valid(value, nil, opts)
         end
       end
@@ -112,7 +112,7 @@ defmodule XSD.Datatype do
         if Keyword.get(opts, :canonicalize) do
           %__MODULE__{value: value}
         else
-          initial_lexical = init_lexical(value, lexical, opts)
+          initial_lexical = init_valid_lexical(value, lexical, opts)
 
           %__MODULE__{
             value: value,
@@ -124,8 +124,8 @@ defmodule XSD.Datatype do
         end
       end
 
-      defp build_invalid(lexical, _opts) do
-        %__MODULE__{uncanonical_lexical: lexical}
+      defp build_invalid(lexical, opts) do
+        %__MODULE__{uncanonical_lexical: init_invalid_lexical(lexical, opts)}
       end
 
       @impl unquote(__MODULE__)
@@ -140,12 +140,12 @@ defmodule XSD.Datatype do
       def canonical_mapping(value), do: to_string(value)
 
       @impl unquote(__MODULE__)
-      def init_lexical(value, lexical, opts)
-      def init_lexical(_value, nil, _opts), do: nil
-      def init_lexical(_value, lexical, _opts), do: lexical
+      def init_valid_lexical(value, lexical, opts)
+      def init_valid_lexical(_value, nil, _opts), do: nil
+      def init_valid_lexical(_value, lexical, _opts), do: lexical
 
       @impl unquote(__MODULE__)
-      def invalid_value_lexical(value), do: to_string(value)
+      def init_invalid_lexical(value, _opts), do: to_string(value)
 
       @impl unquote(__MODULE__)
       def canonical(xsd_value)
@@ -163,8 +163,8 @@ defmodule XSD.Datatype do
       def valid?(_), do: true
 
       defoverridable canonical_mapping: 1,
-                     init_lexical: 3,
-                     invalid_value_lexical: 1
+                     init_valid_lexical: 3,
+                     init_invalid_lexical: 2
     end
   end
 end
