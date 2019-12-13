@@ -147,4 +147,9 @@ defmodule XSD.Datatype.Test.Case do
       end
     end
   end
+
+  def dt(value) do
+    {:ok, date, _} = DateTime.from_iso8601(value)
+    date
+  end
 end
