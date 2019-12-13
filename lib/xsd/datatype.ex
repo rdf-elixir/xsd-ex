@@ -93,6 +93,7 @@ defmodule XSD.Datatype do
       def new(value, opts) do
         case elixir_mapping(value, opts) do
           @invalid_value -> build_invalid(value, opts)
+          {value, lexical} -> build_valid(value, lexical, opts)
           value -> build_valid(value, nil, opts)
         end
       end

@@ -30,7 +30,9 @@ defmodule XSD.Datatype.Test.Case do
           end)
 
           Enum.each(@invalid, fn value ->
-            expected = %unquote(datatype){uncanonical_lexical: to_string(value)}
+            expected = %unquote(datatype){
+              uncanonical_lexical: unquote(datatype).init_invalid_lexical(value, [])
+            }
 
             @tag example: %{input: value, output: expected}
             test "invalid: #{unquote(datatype)}.new(#{inspect(value)})",
@@ -88,7 +90,7 @@ defmodule XSD.Datatype.Test.Case do
           end)
 
           Enum.each(@invalid, fn value ->
-            lexical = to_string(value)
+            lexical = unquote(datatype).init_invalid_lexical(value, [])
             @tag example: %{input: value, lexical: lexical}
             test "of invalid #{unquote(datatype)}.new(#{inspect(value)}) == #{inspect(lexical)}",
                  %{example: example} do
