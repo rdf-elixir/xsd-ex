@@ -5,8 +5,6 @@ defmodule XSD.Date do
 
   use XSD.Datatype, id: "date"
 
-  import XSD.Utils.Timezone
-
   @grammar ~r/\A(-?\d{4}-\d{2}-\d{2})((?:[\+\-]\d{2}:\d{2})|UTC|GMT|Z)?\Z/
   @tz_grammar ~r/\A((?:[\+\-]\d{2}:\d{2})|UTC|GMT|Z)\Z/
 
