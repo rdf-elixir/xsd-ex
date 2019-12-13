@@ -23,3 +23,18 @@ defmodule XSD.Boolean do
   def elixir_mapping(0, _), do: false
   def elixir_mapping(_, _), do: @invalid_value
 end
+
+defmodule XSD.Boolean.Value do
+  @moduledoc !"""
+             This module holds the two `XSD.Boolean` values, so they can be accessed
+             directly without needing to construct them every time. They can't
+             be defined in the XSD.Boolean module, because we can not use the
+             `XSD.Boolean.new` function without having it compiled first.
+             """
+
+  @xsd_true XSD.Boolean.new(true)
+  @xsd_false XSD.Boolean.new(false)
+
+  def unquote(true)(), do: @xsd_true
+  def unquote(false)(), do: @xsd_false
+end

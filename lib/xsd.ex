@@ -1,18 +1,8 @@
 defmodule XSD do
   @moduledoc """
-  Documentation for XSD.
+  TODO: Documentation for XSD.
   """
 
-  @doc """
-  Hello world.
-
-  ## Examples
-
-      iex> XSD.hello()
-      :world
-
-  """
-  def hello do
-    :world
-  end
+  defdelegate unquote(true)(), to: XSD.Boolean.Value
+  defdelegate unquote(false)(), to: XSD.Boolean.Value
 end
