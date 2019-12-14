@@ -15,6 +15,11 @@ defmodule XSD.Datatype do
   def iri(datatype), do: @ns <> datatype
 
   @doc """
+  The name of the datatype.
+  """
+  @callback name :: String.t()
+
+  @doc """
   The IRI of the datatype.
   """
   @callback id :: String.t()
@@ -66,7 +71,7 @@ defmodule XSD.Datatype do
   @callback init_invalid_lexical(any, Keyword.t()) :: String.t()
 
   defmacro __using__(opts) do
-    id = Keyword.fetch!(opts, :id) |> iri()
+    name = Keyword.fetch!(opts, :name)
 
     quote bind_quoted: [], unquote: true do
       @behaviour unquote(__MODULE__)
@@ -75,11 +80,15 @@ defmodule XSD.Datatype do
 
       alias XSD.Literal
 
-      @id unquote(id)
-      @impl unquote(__MODULE__)
       @invalid_value nil
 
-      def id, do: XSD.Datatype.iri(@id)
+      @name unquote(name)
+      @impl unquote(__MODULE__)
+      def name, do: @name
+
+      @id XSD.Datatype.iri(@name)
+      @impl unquote(__MODULE__)
+      def id, do: @id
 
       def new(value, opts \\ [])
 

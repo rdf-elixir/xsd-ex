@@ -1,7 +1,7 @@
 defmodule XSD.BooleanTest do
   use XSD.Datatype.Test.Case,
     datatype: XSD.Boolean,
-    id: "string",
+    name: "boolean",
     valid: %{
       # input => { value, lexical, canonicalized }
       true => {true, nil, "true"},

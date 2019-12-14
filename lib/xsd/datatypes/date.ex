@@ -3,7 +3,7 @@ defmodule XSD.Date do
   `XSD.Datatype` for XSD date.
   """
 
-  use XSD.Datatype, id: "date"
+  use XSD.Datatype, name: "date"
 
   @grammar ~r/\A(-?\d{4}-\d{2}-\d{2})((?:[\+\-]\d{2}:\d{2})|UTC|GMT|Z)?\Z/
   @tz_grammar ~r/\A((?:[\+\-]\d{2}:\d{2})|UTC|GMT|Z)\Z/

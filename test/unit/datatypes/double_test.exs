@@ -1,7 +1,7 @@
 defmodule XSD.DoubleTest do
   use XSD.Datatype.Test.Case,
     datatype: XSD.Double,
-    id: "double",
+    name: "double",
     valid: %{
       # input => { value, lexical, canonicalized }
       0 => {0.0, "0.0", "0.0E0"},

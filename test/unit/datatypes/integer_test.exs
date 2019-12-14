@@ -1,7 +1,7 @@
 defmodule XSD.IntegerTest do
   use XSD.Datatype.Test.Case,
     datatype: XSD.Integer,
-    id: "integer",
+    name: "integer",
     valid: %{
       # input => { value, lexical, canonicalized }
       0 => {0, nil, "0"},

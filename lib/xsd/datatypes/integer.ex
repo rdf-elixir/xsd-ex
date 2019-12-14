@@ -3,7 +3,7 @@ defmodule XSD.Integer do
   `XSD.Datatype` for XSD integers.
   """
 
-  use XSD.Datatype, id: "integer"
+  use XSD.Datatype, name: "integer"
 
   @impl XSD.Datatype
   def lexical_mapping(lexical, _) do

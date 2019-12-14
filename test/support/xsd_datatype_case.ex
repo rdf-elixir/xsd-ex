@@ -3,6 +3,8 @@ defmodule XSD.Datatype.Test.Case do
 
   using(opts) do
     datatype = Keyword.fetch!(opts, :datatype)
+    datatype_name = Keyword.fetch!(opts, :name)
+    datatype_iri = XSD.Datatype.iri(datatype_name)
     valid = Keyword.get(opts, :valid)
     invalid = Keyword.get(opts, :invalid)
 
@@ -18,6 +20,12 @@ defmodule XSD.Datatype.Test.Case do
       if unquote(valid) do
         @valid unquote(valid)
         @invalid unquote(invalid)
+
+        test "registration" do
+          assert unquote(datatype) in XSD.datatypes()
+          assert XSD.datatype_by_name(unquote(datatype_name)) == unquote(datatype)
+          assert XSD.datatype_by_iri(unquote(datatype_iri)) == unquote(datatype)
+        end
 
         describe "general new" do
           Enum.each(@valid, fn {input, {value, lexical, _}} ->

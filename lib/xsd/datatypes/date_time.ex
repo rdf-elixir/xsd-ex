@@ -3,7 +3,7 @@ defmodule XSD.DateTime do
   `XSD.Datatype` for XSD dateTimes.
   """
 
-  use XSD.Datatype, id: "dateTime"
+  use XSD.Datatype, name: "dateTime"
 
   @impl XSD.Datatype
   def lexical_mapping(lexical, opts) do

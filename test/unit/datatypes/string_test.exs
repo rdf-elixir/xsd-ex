@@ -1,7 +1,7 @@
 defmodule XSD.StringTest do
   use XSD.Datatype.Test.Case,
     datatype: XSD.String,
-    id: "string",
+    name: "string",
     valid: %{
       # input => { value, lexical, canonicalized }
       "foo" => {"foo", nil, "foo"},

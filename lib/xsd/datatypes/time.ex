@@ -3,7 +3,7 @@ defmodule XSD.Time do
   `XSD.Datatype` for XSD times.
   """
 
-  use XSD.Datatype, id: "time"
+  use XSD.Datatype, name: "time"
 
   @grammar ~r/\A(\d{2}:\d{2}:\d{2}(?:\.\d+)?)((?:[\+\-]\d{2}:\d{2})|UTC|GMT|Z)?\Z/
   @tz_number_grammar ~r/\A(?:([\+\-])(\d{2}):(\d{2}))\Z/

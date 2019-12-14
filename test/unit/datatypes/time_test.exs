@@ -1,7 +1,7 @@
 defmodule XSD.TimeTest do
   use XSD.Datatype.Test.Case,
     datatype: XSD.Time,
-    id: "time",
+    name: "time",
     valid: %{
       # input => { value, lexical, canonicalized }
       ~T[00:00:00] => {~T[00:00:00], nil, "00:00:00"},

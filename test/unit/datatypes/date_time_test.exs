@@ -3,7 +3,7 @@ defmodule XSD.DateTimeTest do
 
   use XSD.Datatype.Test.Case,
     datatype: XSD.DateTime,
-    id: "dateTime",
+    name: "dateTime",
     valid: %{
       # input => { value, lexical, canonicalized }
       dt("2010-01-01T00:00:00Z") => {dt("2010-01-01T00:00:00Z"), nil, "2010-01-01T00:00:00Z"},

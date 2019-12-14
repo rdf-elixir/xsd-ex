@@ -3,7 +3,7 @@ defmodule XSD.Double do
   `XSD.Datatype` for XSD doubles.
   """
 
-  use XSD.Datatype, id: "double"
+  use XSD.Datatype, name: "double"
 
   @special_values ~W[positive_infinity negative_infinity nan]a
 

@@ -1,7 +1,7 @@
 defmodule XSD.DecimalTest do
   use XSD.Datatype.Test.Case,
     datatype: XSD.Decimal,
-    id: "decimal",
+    name: "decimal",
     valid: %{
       # input => {value, lexical, canonicalized}
       0 => {Elixir.Decimal.from_float(0.0), nil, "0.0"},
