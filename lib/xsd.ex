@@ -24,6 +24,11 @@ defmodule XSD do
 
   def datatype_by_iri(iri), do: @by_iri[iri]
 
+  Enum.each(@datatypes, fn datatype ->
+    defdelegate unquote(String.to_atom(datatype.name))(value), to: datatype, as: :new
+    defdelegate unquote(String.to_atom(datatype.name))(value, opts), to: datatype, as: :new
+  end)
+
   defdelegate unquote(true)(), to: XSD.Boolean.Value
   defdelegate unquote(false)(), to: XSD.Boolean.Value
 end
