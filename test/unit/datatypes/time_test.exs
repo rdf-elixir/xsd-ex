@@ -142,4 +142,28 @@ defmodule XSD.TimeTest do
       assert XSD.Time.cast(:foo) == nil
     end
   end
+
+  describe "Elixir equality" do
+    test "two literals are equal when they have the same datatype and lexical form" do
+      [
+        {~T[00:00:00], "00:00:00"}
+      ]
+      |> Enum.each(fn {l, r} ->
+        assert Time.new(l) == Time.new(r)
+      end)
+    end
+
+    test "two literals with same value but different lexical form are not equal" do
+      [
+        {~T[00:00:00], "00:00:00Z"},
+        {"00:00:00", "00:00:00Z"},
+        {"00:00:00.0000", "00:00:00Z"},
+        {"00:00:00.0000Z", "00:00:00Z"},
+        {"00:00:00+00:00", "00:00:00Z"}
+      ]
+      |> Enum.each(fn {l, r} ->
+        assert Time.new(l) != Time.new(r)
+      end)
+    end
+  end
 end

@@ -83,4 +83,30 @@ defmodule XSD.DoubleTest do
       assert XSD.Double.cast(:foo) == nil
     end
   end
+
+  describe "Elixir equality" do
+    test "two literals are equal when they have the same datatype and lexical form" do
+      [
+        {"1.0", 1.0},
+        {"-42.0", -42.0},
+        {"1.0", 1.0}
+      ]
+      |> Enum.each(fn {l, r} ->
+        assert Double.new(l) == Double.new(r)
+      end)
+    end
+
+    test "two literals with same value but different lexical form are not equal" do
+      [
+        {"1", 1.0},
+        {"01", 1.0},
+        {"1.0E0", 1.0},
+        {"1.0E0", "1.0"},
+        {"+42", 42.0}
+      ]
+      |> Enum.each(fn {l, r} ->
+        assert Double.new(l) != Double.new(r)
+      end)
+    end
+  end
 end

@@ -1,4 +1,6 @@
 defmodule XSD.DecimalTest do
+  # TODO: Why can't we use the Decimal alias in the use options? Maybe it's the special ExUnit.CaseTemplate.using/2 macro in XSD.Datatype.Test.Case?
+  #  alias Elixir.Decimal, as: D
   use XSD.Datatype.Test.Case,
     datatype: XSD.Decimal,
     name: "decimal",
@@ -106,6 +108,58 @@ defmodule XSD.DecimalTest do
       assert XSD.Decimal.cast(:foo) == nil
     end
   end
+
+  describe "Elixir equality" do
+    test "two literals are equal when they have the same datatype and lexical form" do
+      [
+        {"1.0", 1.0},
+        {"-42.0", -42.0},
+        {"1.0", 1.0}
+      ]
+      |> Enum.each(fn {l, r} ->
+        assert Decimal.new(l) == Decimal.new(r)
+      end)
+    end
+
+    test "two literals with same value but different lexical form are not equal" do
+      [
+        {"1", 1.0},
+        {"01", 1.0},
+        {"1.0E0", 1.0},
+        {"1.0E0", "1.0"},
+        {"+42", 42.0}
+      ]
+      |> Enum.each(fn {l, r} ->
+        assert Decimal.new(l) != Decimal.new(r)
+      end)
+    end
+  end
+
+  #  test "digit_count/1" do
+  #    assert XSD.Decimal.digit_count(XSD.decimal("1.2345")) == 5
+  #    assert XSD.Decimal.digit_count(XSD.decimal("-1.2345")) == 5
+  #    assert XSD.Decimal.digit_count(XSD.decimal("+1.2345")) == 5
+  #    assert XSD.Decimal.digit_count(XSD.decimal("01.23450")) == 5
+  #    assert XSD.Decimal.digit_count(XSD.decimal("01.23450")) == 5
+  #    assert XSD.Decimal.digit_count(XSD.decimal("NAN")) == nil
+  #
+  #    assert XSD.Decimal.digit_count(XSD.integer("2")) == 1
+  #    assert XSD.Decimal.digit_count(XSD.integer("23")) == 2
+  #    assert XSD.Decimal.digit_count(XSD.integer("023")) == 2
+  #  end
+  #
+  #  test "fraction_digit_count/1" do
+  #    assert XSD.Decimal.fraction_digit_count(XSD.decimal("1.2345")) == 4
+  #    assert XSD.Decimal.fraction_digit_count(XSD.decimal("-1.2345")) == 4
+  #    assert XSD.Decimal.fraction_digit_count(XSD.decimal("+1.2345")) == 4
+  #    assert XSD.Decimal.fraction_digit_count(XSD.decimal("01.23450")) == 4
+  #    assert XSD.Decimal.fraction_digit_count(XSD.decimal("0.023450")) == 5
+  #    assert XSD.Decimal.fraction_digit_count(XSD.decimal("NAN")) == nil
+  #
+  #    assert XSD.Decimal.fraction_digit_count(XSD.integer("2")) == 0
+  #    assert XSD.Decimal.fraction_digit_count(XSD.integer("23")) == 0
+  #    assert XSD.Decimal.fraction_digit_count(XSD.integer("023")) == 0
+  #  end
 
   defmacrop sigil_d(str, _opts) do
     quote do

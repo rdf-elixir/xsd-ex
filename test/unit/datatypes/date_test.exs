@@ -131,4 +131,30 @@ defmodule XSD.DateTest do
       assert XSD.Date.cast(:foo) == nil
     end
   end
+
+  describe "Elixir equality" do
+    test "two literals are equal when they have the same datatype and lexical form" do
+      [
+        {~D[2010-01-01], "2010-01-01"}
+      ]
+      |> Enum.each(fn {l, r} ->
+        assert Date.new(l) == Date.new(r)
+      end)
+    end
+
+    test "two literals with same value but different lexical form are not equal" do
+      [
+        {~D[2010-01-01], "2010-01-01Z"},
+        {~D[2010-01-01], "2010-01-01+00:00"},
+        {"2010-01-01", "00:00:00Z"},
+        {"2010-01-01+00:00", "00:00:00Z"},
+        {"2010-01-01-00:00", "00:00:00Z"},
+        {"2010-01-01+00:00", "00:00:00"},
+        {"2010-01-01-00:00", "00:00:00"}
+      ]
+      |> Enum.each(fn {l, r} ->
+        assert Date.new(l) != Date.new(r)
+      end)
+    end
+  end
 end
