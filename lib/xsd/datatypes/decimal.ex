@@ -70,4 +70,28 @@ defmodule XSD.Decimal do
 
   def canonical_mapping(%D{} = decimal),
     do: D.to_string(decimal, :normal)
+
+  @impl XSD.Datatype
+  def cast(xsd_typed_value)
+
+  # Invalid values can not be casted in general
+  def cast(%{value: @invalid_value}), do: @invalid_value
+
+  def cast(%__MODULE__{} = xsd_decimal), do: xsd_decimal
+
+  def cast(%XSD.Boolean{value: false}), do: new(0.0)
+  def cast(%XSD.Boolean{value: true}), do: new(1.0)
+
+  def cast(%XSD.String{} = xsd_string) do
+    xsd_string.value
+    |> new()
+    |> canonical()
+    |> validate_cast()
+  end
+
+  def cast(%XSD.Integer{} = xsd_integer), do: new(xsd_integer.value)
+
+  def cast(%XSD.Double{value: value}) when is_float(value), do: new(value)
+
+  def cast(_), do: @invalid_value
 end

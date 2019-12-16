@@ -22,6 +22,33 @@ defmodule XSD.Boolean do
   def elixir_mapping(1, _), do: true
   def elixir_mapping(0, _), do: false
   def elixir_mapping(_, _), do: @invalid_value
+
+  @impl XSD.Datatype
+  def cast(xsd_typed_value)
+
+  # Invalid values can not be casted in general
+  def cast(%{value: @invalid_value}), do: @invalid_value
+
+  def cast(%__MODULE__{} = xsd_boolean), do: xsd_boolean
+
+  def cast(%XSD.String{} = xsd_string) do
+    xsd_string.value
+    |> new()
+    |> canonical()
+    |> validate_cast()
+  end
+
+  def cast(%XSD.Decimal{} = xsd_decimal) do
+    !Decimal.equal?(xsd_decimal.value, 0) |> new()
+  end
+
+  def cast(value) do
+    if XSD.Numeric.value?(value) do
+      new(value.value not in [0, 0.0, :nan])
+    else
+      @invalid_value
+    end
+  end
 end
 
 defmodule XSD.Boolean.Value do

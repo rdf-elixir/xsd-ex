@@ -86,4 +86,34 @@ defmodule XSD.Double do
       |> to_string()
     end
   end
+
+  @impl XSD.Datatype
+  def cast(xsd_typed_value)
+
+  # Invalid values can not be casted in general
+  def cast(%{value: @invalid_value}), do: @invalid_value
+
+  def cast(%__MODULE__{} = xsd_double), do: xsd_double
+
+  def cast(%XSD.Boolean{value: false}), do: new(0.0)
+  def cast(%XSD.Boolean{value: true}), do: new(1.0)
+
+  def cast(%XSD.String{} = xsd_string) do
+    xsd_string.value
+    |> new()
+    |> canonical()
+    |> validate_cast()
+  end
+
+  def cast(%XSD.Integer{} = xsd_integer) do
+    new(xsd_integer.value)
+  end
+
+  def cast(%XSD.Decimal{} = xsd_decimal) do
+    xsd_decimal.value
+    |> Decimal.to_float()
+    |> new()
+  end
+
+  def cast(_), do: @invalid_value
 end

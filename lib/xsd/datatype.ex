@@ -40,6 +40,14 @@ defmodule XSD.Datatype do
   @callback canonical(any) :: any
 
   @doc """
+  Casts a `XSD.Datatype` value of one type into a `XSD.Datatype` value of another type.
+
+  If the given value is invalid or can not be converted into this datatype an
+  implementation should return `@invalid_value`.
+  """
+  @callback cast(any) :: any
+
+  @doc """
   A mapping from the lexical space of a `XSD.Datatype` into its value space.
   """
   @callback lexical_mapping(String.t(), Keyword.t()) :: any
@@ -139,6 +147,9 @@ defmodule XSD.Datatype do
       end
 
       @impl unquote(__MODULE__)
+      def canonical_mapping(value), do: to_string(value)
+
+      @impl unquote(__MODULE__)
       def lexical(lexical)
 
       def lexical(%__MODULE__{value: value, uncanonical_lexical: nil}),
@@ -146,8 +157,15 @@ defmodule XSD.Datatype do
 
       def lexical(%__MODULE__{uncanonical_lexical: lexical}), do: lexical
 
-      @impl unquote(__MODULE__)
-      def canonical_mapping(value), do: to_string(value)
+      def canonical_lexical(%__MODULE__{value: nil}), do: nil
+
+      def canonical_lexical(%__MODULE__{value: value, uncanonical_lexical: nil}),
+        do: canonical_mapping(value)
+
+      def canonical_lexical(%__MODULE__{} = value),
+        do: value |> canonical() |> lexical()
+
+      def canonical_lexical(_), do: nil
 
       @impl unquote(__MODULE__)
       def init_valid_lexical(value, lexical, opts)
@@ -170,7 +188,12 @@ defmodule XSD.Datatype do
       @impl unquote(__MODULE__)
       def valid?(xsd_value)
       def valid?(%__MODULE__{value: @invalid_value}), do: false
-      def valid?(_), do: true
+      def valid?(%__MODULE__{}), do: true
+      def valid?(_), do: false
+
+      defp validate_cast(%__MODULE__{} = literal), do: if(valid?(literal), do: literal)
+      defp validate_cast(_), do: nil
+
 
       defoverridable canonical_mapping: 1,
                      init_valid_lexical: 3,

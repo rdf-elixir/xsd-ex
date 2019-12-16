@@ -104,4 +104,30 @@ defmodule XSD.Date do
       to_string(value)
     end
   end
+
+  @impl XSD.Datatype
+  def cast(xsd_typed_value)
+
+  # Invalid values can not be casted in general
+  def cast(%{value: @invalid_value}), do: @invalid_value
+
+  def cast(%__MODULE__{} = xsd_date), do: xsd_date
+
+  def cast(%XSD.DateTime{} = xsd_datetime) do
+    case xsd_datetime.value do
+      %NaiveDateTime{} = datetime ->
+        datetime
+        |> NaiveDateTime.to_date()
+        |> new()
+
+      %DateTime{} = datetime ->
+        datetime
+        |> DateTime.to_date()
+        |> new(tz: XSD.DateTime.tz(xsd_datetime))
+    end
+  end
+
+  def cast(%XSD.String{} = xsd_string), do: new(xsd_string.value)
+
+  def cast(_), do: @invalid_value
 end

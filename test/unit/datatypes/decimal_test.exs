@@ -49,6 +49,64 @@ defmodule XSD.DecimalTest do
       Elixir.Decimal.new("Inf")
     ]
 
+  describe "cast/1" do
+    test "casting a decimal returns the input as it is" do
+      assert XSD.decimal(0) |> XSD.Decimal.cast() == XSD.decimal(0)
+      assert XSD.decimal("-0.0") |> XSD.Decimal.cast() == XSD.decimal("-0.0")
+      assert XSD.decimal(1) |> XSD.Decimal.cast() == XSD.decimal(1)
+      assert XSD.decimal(0.1) |> XSD.Decimal.cast() == XSD.decimal(0.1)
+    end
+
+    test "casting a boolean" do
+      assert XSD.true() |> XSD.Decimal.cast() == XSD.decimal(1.0)
+      assert XSD.false() |> XSD.Decimal.cast() == XSD.decimal(0.0)
+    end
+
+    test "casting a string with a value from the lexical value space of xsd:decimal" do
+      assert XSD.string("0") |> XSD.Decimal.cast() == XSD.decimal(0)
+      assert XSD.string("3.14") |> XSD.Decimal.cast() == XSD.decimal(3.14)
+    end
+
+    test "casting a string with a value not in the lexical value space of xsd:decimal" do
+      assert XSD.string("foo") |> XSD.Decimal.cast() == nil
+    end
+
+    test "casting an integer" do
+      assert XSD.integer(0) |> XSD.Decimal.cast() == XSD.decimal(0.0)
+      assert XSD.integer(42) |> XSD.Decimal.cast() == XSD.decimal(42.0)
+    end
+
+    test "casting a double" do
+      assert XSD.double(0.0) |> XSD.Decimal.cast() == XSD.decimal(0.0)
+      assert XSD.double("-0.0") |> XSD.Decimal.cast() == XSD.decimal(0.0)
+      assert XSD.double(0.1) |> XSD.Decimal.cast() == XSD.decimal(0.1)
+      assert XSD.double(1) |> XSD.Decimal.cast() == XSD.decimal(1.0)
+      assert XSD.double(3.14) |> XSD.Decimal.cast() == XSD.decimal(3.14)
+      assert XSD.double(10.1e1) |> XSD.Decimal.cast() == XSD.decimal(101.0)
+
+      assert XSD.double("NAN") |> XSD.Decimal.cast() == nil
+      assert XSD.double("+INF") |> XSD.Decimal.cast() == nil
+    end
+
+    @tag skip: "TODO: XSD.Float datatype"
+    test "casting a float"
+
+    test "with invalid literals" do
+      assert XSD.boolean("42") |> XSD.Decimal.cast() == nil
+      assert XSD.integer(3.14) |> XSD.Decimal.cast() == nil
+      assert XSD.decimal("NAN") |> XSD.Decimal.cast() == nil
+      assert XSD.double(true) |> XSD.Decimal.cast() == nil
+    end
+
+    test "with literals of unsupported datatypes" do
+      assert XSD.date("2020-01-01") |> XSD.Decimal.cast() == nil
+    end
+
+    test "with non-XSD-typed values" do
+      assert XSD.Decimal.cast(:foo) == nil
+    end
+  end
+
   defmacrop sigil_d(str, _opts) do
     quote do
       Elixir.Decimal.new(unquote(str))

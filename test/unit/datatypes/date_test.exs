@@ -84,4 +84,51 @@ defmodule XSD.DateTest do
                %XSD.Date{uncanonical_lexical: "2020-01-01+00:00:"}
     end
   end
+
+  describe "cast/1" do
+    test "casting a date returns the input as it is" do
+      assert XSD.date("2010-01-01") |> XSD.Date.cast() ==
+               XSD.date("2010-01-01")
+    end
+
+    test "casting a string" do
+      assert XSD.string("2010-01-01") |> XSD.Date.cast() ==
+               XSD.date("2010-01-01")
+
+      assert XSD.string("2010-01-01Z") |> XSD.Date.cast() ==
+               XSD.date("2010-01-01Z")
+
+      assert XSD.string("2010-01-01+01:00") |> XSD.Date.cast() ==
+               XSD.date("2010-01-01+01:00")
+    end
+
+    test "casting a datetime" do
+      assert XSD.datetime("2010-01-01T01:00:00") |> XSD.Date.cast() ==
+               XSD.date("2010-01-01")
+
+      assert XSD.datetime("2010-01-01T00:00:00Z") |> XSD.Date.cast() ==
+               XSD.date("2010-01-01Z")
+
+      assert XSD.datetime("2010-01-01T00:00:00+00:00") |> XSD.Date.cast() ==
+               XSD.date("2010-01-01+00:00")
+
+      assert XSD.datetime("2010-01-01T23:00:00+01:00") |> XSD.Date.cast() ==
+               XSD.date("2010-01-01+01:00")
+    end
+
+    test "with invalid literals" do
+      assert XSD.date("02010-01-00") |> XSD.Date.cast() == nil
+      assert XSD.datetime("02010-01-01T00:00:00") |> XSD.Date.cast() == nil
+    end
+
+    test "with literals of unsupported datatypes" do
+      assert XSD.false() |> XSD.Date.cast() == nil
+      assert XSD.integer(1) |> XSD.Date.cast() == nil
+      assert XSD.decimal(3.14) |> XSD.Date.cast() == nil
+    end
+
+    test "with non-XSD-typed values" do
+      assert XSD.Date.cast(:foo) == nil
+    end
+  end
 end

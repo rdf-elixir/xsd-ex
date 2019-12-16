@@ -95,4 +95,51 @@ defmodule XSD.TimeTest do
                %XSD.Time{uncanonical_lexical: "12:00:00+00:00:"}
     end
   end
+
+  describe "cast/1" do
+    test "casting a time returns the input as it is" do
+      assert XSD.time("01:00:00") |> XSD.Time.cast() ==
+               XSD.time("01:00:00")
+    end
+
+    test "casting a string" do
+      assert XSD.string("01:00:00") |> XSD.Time.cast() ==
+               XSD.time("01:00:00")
+
+      assert XSD.string("01:00:00Z") |> XSD.Time.cast() ==
+               XSD.time("01:00:00Z")
+
+      assert XSD.string("01:00:00+01:00") |> XSD.Time.cast() ==
+               XSD.time("01:00:00+01:00")
+    end
+
+    test "casting a datetime" do
+      assert XSD.datetime("2010-01-01T01:00:00") |> XSD.Time.cast() ==
+               XSD.time("01:00:00")
+
+      assert XSD.datetime("2010-01-01T00:00:00Z") |> XSD.Time.cast() ==
+               XSD.time("00:00:00Z")
+
+      assert XSD.datetime("2010-01-01T00:00:00+00:00") |> XSD.Time.cast() ==
+               XSD.time("00:00:00Z")
+
+      assert XSD.datetime("2010-01-01T23:00:00+01:00") |> XSD.Time.cast() ==
+               XSD.time("23:00:00+01:00")
+    end
+
+    test "with invalid literals" do
+      assert XSD.time("25:00:00") |> XSD.Time.cast() == nil
+      assert XSD.datetime("02010-01-01T00:00:00") |> XSD.Time.cast() == nil
+    end
+
+    test "with literals of unsupported datatypes" do
+      assert XSD.false() |> XSD.Time.cast() == nil
+      assert XSD.integer(1) |> XSD.Time.cast() == nil
+      assert XSD.decimal(3.14) |> XSD.Time.cast() == nil
+    end
+
+    test "with non-XSD-typed values" do
+      assert XSD.Time.cast(:foo) == nil
+    end
+  end
 end

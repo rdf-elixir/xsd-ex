@@ -57,4 +57,69 @@ defmodule XSD.DateTime do
   def canonical_mapping(value)
   def canonical_mapping(%DateTime{} = value), do: DateTime.to_iso8601(value)
   def canonical_mapping(%NaiveDateTime{} = value), do: NaiveDateTime.to_iso8601(value)
+
+  @impl XSD.Datatype
+  def cast(xsd_typed_value)
+
+  # Invalid values can not be casted in general
+  def cast(%{value: @invalid_value}), do: @invalid_value
+
+  def cast(%__MODULE__{} = xsd_datetime), do: xsd_datetime
+
+  def cast(%XSD.Date{} = xsd_date) do
+    case xsd_date.value do
+      {value, zone} ->
+        (value |> XSD.Date.new() |> XSD.Date.canonical_lexical()) <> "T00:00:00" <> zone
+
+      value ->
+        (value |> XSD.Date.new() |> XSD.Date.canonical_lexical()) <> "T00:00:00"
+    end
+    |> new()
+  end
+
+  def cast(%XSD.String{} = xsd_string) do
+    xsd_string.value
+    |> new()
+    |> validate_cast()
+  end
+
+  def cast(_), do: @invalid_value
+
+  @doc """
+  Extracts the timezone string from a `XSD.DateTime` value.
+  """
+  def tz(xsd_datetime)
+
+  def tz(%__MODULE__{value: %NaiveDateTime{}}), do: ""
+
+  def tz(date_time_literal) do
+    if valid?(date_time_literal) do
+      date_time_literal
+      |> lexical()
+      |> XSD.Utils.DateTime.tz()
+    end
+  end
+
+  @doc """
+  Converts a datetime literal to a canonical string, preserving the zone information.
+  """
+  def canonical_lexical_with_zone(%__MODULE__{} = xsd_datetime) do
+    case tz(xsd_datetime) do
+      nil ->
+        nil
+
+      zone when zone in ["Z", "", "+00:00", "-00:00"] ->
+        canonical_lexical(xsd_datetime)
+
+      zone ->
+        xsd_datetime
+        |> lexical()
+        |> String.replace_trailing(zone, "Z")
+        |> DateTime.from_iso8601()
+        |> elem(1)
+        |> new()
+        |> canonical_lexical()
+        |> String.replace_trailing("Z", zone)
+    end
+  end
 end
