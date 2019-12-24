@@ -122,4 +122,23 @@ defmodule XSD.DateTime do
         |> String.replace_trailing("Z", zone)
     end
   end
+
+  @impl XSD.Datatype
+  def equal_value?(left, right)
+
+  def equal_value?(
+        %__MODULE__{value: %type{} = value1},
+        %__MODULE__{value: %type{} = value2}
+      ) do
+    type.compare(value1, value2) == :eq
+  end
+
+  def equal_value?(
+        %__MODULE__{value: nil, uncanonical_lexical: lexical1},
+        %__MODULE__{value: nil, uncanonical_lexical: lexical2}
+      ) do
+    lexical1 == lexical2
+  end
+
+  def equal_value?(_, _), do: false
 end

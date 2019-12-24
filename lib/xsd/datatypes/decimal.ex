@@ -94,4 +94,7 @@ defmodule XSD.Decimal do
   def cast(%XSD.Double{value: value}) when is_float(value), do: new(value)
 
   def cast(_), do: @invalid_value
+
+  @impl XSD.Datatype
+  def equal_value?(left, right), do: XSD.Numeric.equal_value?(left, right)
 end

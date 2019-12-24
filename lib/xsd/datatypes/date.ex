@@ -130,4 +130,39 @@ defmodule XSD.Date do
   def cast(%XSD.String{} = xsd_string), do: new(xsd_string.value)
 
   def cast(_), do: @invalid_value
+
+  @impl XSD.Datatype
+  def equal_value?(literal1, literal2)
+
+  def equal_value?(
+        %__MODULE__{value: nil, uncanonical_lexical: lexical1},
+        %__MODULE__{value: nil, uncanonical_lexical: lexical2}
+      ) do
+    lexical1 == lexical2
+  end
+
+  def equal_value?(%__MODULE__{value: value1}, %__MODULE__{value: value2})
+      when is_nil(value1) or is_nil(value2),
+      do: false
+
+  def equal_value?(%__MODULE__{value: value1}, %__MODULE__{value: value2}) do
+    XSD.DateTime.equal_value?(
+      comparison_normalization(value1),
+      comparison_normalization(value2)
+    )
+  end
+
+  def equal_value?(_, _), do: false
+
+  defp comparison_normalization({date, tz}) do
+    (Date.to_iso8601(date) <> "T00:00:00" <> tz)
+    |> XSD.DateTime.new()
+  end
+
+  defp comparison_normalization(%Date{} = date) do
+    (Date.to_iso8601(date) <> "T00:00:00")
+    |> XSD.DateTime.new()
+  end
+
+  defp comparison_normalization(_), do: nil
 end

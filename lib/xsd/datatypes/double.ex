@@ -116,4 +116,7 @@ defmodule XSD.Double do
   end
 
   def cast(_), do: @invalid_value
+
+  @impl XSD.Datatype
+  def equal_value?(left, right), do: XSD.Numeric.equal_value?(left, right)
 end

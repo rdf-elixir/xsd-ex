@@ -48,6 +48,14 @@ defmodule XSD.Datatype do
   @callback cast(any) :: any
 
   @doc """
+  Checks if two value `XSD.Datatype` values are equal.
+
+  The default implementation of the `_using__` macro compares the values of the
+  `canonical/1` forms of the given value of this datatype.
+  """
+  @callback equal_value?(value1 :: any, value2 :: any) :: boolean
+
+  @doc """
   A mapping from the lexical space of a `XSD.Datatype` into its value space.
   """
   @callback lexical_mapping(String.t(), Keyword.t()) :: any
@@ -194,10 +202,27 @@ defmodule XSD.Datatype do
       defp validate_cast(%__MODULE__{} = literal), do: if(valid?(literal), do: literal)
       defp validate_cast(_), do: nil
 
+      @impl unquote(__MODULE__)
+      def equal_value?(value1, value2)
+
+      def equal_value?(
+            %datatype{uncanonical_lexical: lexical1, value: nil},
+            %datatype{uncanonical_lexical: lexical2, value: nil}
+          ) do
+        lexical1 == lexical2
+      end
+
+      def equal_value?(%datatype{} = literal1, %datatype{} = literal2) do
+        canonical(literal1).value == canonical(literal2).value
+      end
+
+      def equal_value?(_, _), do: false
+
 
       defoverridable canonical_mapping: 1,
                      init_valid_lexical: 3,
-                     init_invalid_lexical: 2
+                     init_invalid_lexical: 2,
+                     equal_value?: 2
     end
   end
 end

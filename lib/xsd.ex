@@ -36,6 +36,9 @@ defmodule XSD do
   def value?(%datatype{}), do: datatype?(datatype)
   def value?(_), do: false
 
+  defdelegate equal?(left, right), to: XSD.Value
+  defdelegate equal_value?(left, right), to: XSD.Value
+
   Enum.each(@datatypes, fn datatype ->
     defdelegate unquote(String.to_atom(datatype.name))(value), to: datatype, as: :new
     defdelegate unquote(String.to_atom(datatype.name))(value, opts), to: datatype, as: :new
