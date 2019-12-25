@@ -141,4 +141,44 @@ defmodule XSD.DateTime do
   end
 
   def equal_value?(_, _), do: false
+
+  @impl XSD.Datatype
+  def compare(left, right)
+
+  def compare(
+        %__MODULE__{value: %type{} = value1},
+        %__MODULE__{value: %type{} = value2}
+      ) do
+    type.compare(value1, value2)
+  end
+
+  def compare(
+        %__MODULE__{value: %DateTime{}} = left,
+        %__MODULE__{value: %NaiveDateTime{} = right_value}
+      ) do
+    cond do
+      compare(left, new(to_datetime(right_value, "+"))) == :lt -> :lt
+      compare(left, new(to_datetime(right_value, "-"))) == :gt -> :gt
+      true -> :indeterminate
+    end
+  end
+
+  def compare(
+        %__MODULE__{value: %NaiveDateTime{} = left},
+        %__MODULE__{value: %DateTime{}} = right_literal
+      ) do
+    cond do
+      compare(new(to_datetime(left, "-")), right_literal) == :lt -> :lt
+      compare(new(to_datetime(left, "+")), right_literal) == :gt -> :gt
+      true -> :indeterminate
+    end
+  end
+
+  def compare(_, _), do: nil
+
+  defp to_datetime(naive_datetime, offset) do
+    (NaiveDateTime.to_iso8601(naive_datetime) <> offset <> "14:00")
+    |> DateTime.from_iso8601()
+    |> elem(1)
+  end
 end

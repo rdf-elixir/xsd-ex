@@ -154,6 +154,28 @@ defmodule XSD.Date do
 
   def equal_value?(_, _), do: false
 
+  @impl XSD.Datatype
+  def compare(left, right)
+
+  def compare(
+        %__MODULE__{value: value1},
+        %__MODULE__{value: value2}
+      )
+      when is_nil(value1) or is_nil(value2),
+      do: nil
+
+  def compare(
+        %__MODULE__{value: value1},
+        %__MODULE__{value: value2}
+      ) do
+    XSD.DateTime.compare(
+      comparison_normalization(value1),
+      comparison_normalization(value2)
+    )
+  end
+
+  def compare(_, _), do: nil
+
   defp comparison_normalization({date, tz}) do
     (Date.to_iso8601(date) <> "T00:00:00" <> tz)
     |> XSD.DateTime.new()

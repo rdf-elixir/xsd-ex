@@ -21,4 +21,37 @@ defmodule XSD.Value do
     do: datatype.equal_value?(left, right)
 
   def equal_value?(_, _), do: false
+
+  def compare(left, right)
+
+  def compare(%datatype{} = left, right) when datatype in @datatypes,
+    do: datatype.compare(left, right)
+
+  def compare(_, _), do: nil
+
+  @doc """
+  Checks if the first of two `XSD.Datatype` values is smaller then the other.
+
+  Returns `nil` when the given arguments are not comparable datatypes.
+  """
+  def less_than?(left, right) do
+    case compare(left, right) do
+      :lt -> true
+      nil -> nil
+      _ -> false
+    end
+  end
+
+  @doc """
+  Checks if the first of two `XSD.Datatype` values is greater then the other.
+
+  Returns `nil` when the given arguments are not comparable datatypes.
+  """
+  def greater_than?(left, right) do
+    case compare(left, right) do
+      :gt -> true
+      nil -> nil
+      _ -> false
+    end
+  end
 end

@@ -56,6 +56,22 @@ defmodule XSD.Datatype do
   @callback equal_value?(value1 :: any, value2 :: any) :: boolean
 
   @doc """
+  Compares two `XSD.Datatype` values.
+
+  Returns `:gt` if first value is greater than the second in terms of their datatype
+  and `:lt` for vice versa. If the two values are equal `:eq` is returned.
+  For datatypes with only partial ordering `:indeterminate` is returned when the
+  order of the given literals is not defined.
+
+  Returns `nil` when the given arguments are not comparable datatypes or if one
+  them is invalid.
+
+  The default implementation of the `_using__` macro compares the values of the
+  `canonical/1` forms of the given values of this datatype.
+  """
+  @callback compare(value1 :: any, value2 :: any) :: :lt | :gt | :eq | :indeterminate | nil
+
+  @doc """
   A mapping from the lexical space of a `XSD.Datatype` into its value space.
   """
   @callback lexical_mapping(String.t(), Keyword.t()) :: any
@@ -212,17 +228,38 @@ defmodule XSD.Datatype do
         lexical1 == lexical2
       end
 
-      def equal_value?(%datatype{} = literal1, %datatype{} = literal2) do
-        canonical(literal1).value == canonical(literal2).value
+      def equal_value?(%datatype{} = value1, %datatype{} = value2) do
+        canonical(value1).value == canonical(value2).value
       end
 
       def equal_value?(_, _), do: false
 
+      @impl unquote(__MODULE__)
+      def compare(left, right)
+
+      def compare(
+            %__MODULE__{value: left_value} = left,
+            %__MODULE__{value: right_value} = right
+          )
+          when not (is_nil(left_value) or is_nil(right_value)) do
+        case {canonical(left).value, canonical(right).value} do
+          {value1, value2} when value1 < value2 -> :lt
+          {value1, value2} when value1 > value2 -> :gt
+          _ -> if equal_value?(left, right), do: :eq
+        end
+      end
+
+      def compare(_, _), do: nil
+
+      def less_than?(literal1, literal2), do: XSD.Value.less_than?(literal1, literal2)
+
+      def greater_than?(literal1, literal2), do: XSD.Value.greater_than?(literal1, literal2)
 
       defoverridable canonical_mapping: 1,
                      init_valid_lexical: 3,
                      init_invalid_lexical: 2,
-                     equal_value?: 2
+                     equal_value?: 2,
+                     compare: 2
     end
   end
 end

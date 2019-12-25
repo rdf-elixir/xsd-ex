@@ -97,4 +97,7 @@ defmodule XSD.Decimal do
 
   @impl XSD.Datatype
   def equal_value?(left, right), do: XSD.Numeric.equal_value?(left, right)
+
+  @impl XSD.Datatype
+  def compare(left, right), do: XSD.Numeric.compare(left, right)
 end
