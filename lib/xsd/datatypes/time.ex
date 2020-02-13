@@ -70,7 +70,7 @@ defmodule XSD.Time do
         if (minute = time.minute - minute) < 0 do
           {rem(24 + time.hour - hour - 1, 24), minute + 60}
         else
-          {time.hour - hour - div(minute, 60), rem(minute, 60)}
+          {rem(24 + time.hour - hour - div(minute, 60), 24), rem(minute, 60)}
         end
 
       nil ->
