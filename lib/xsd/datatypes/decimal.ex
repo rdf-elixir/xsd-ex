@@ -3,7 +3,7 @@ defmodule XSD.Decimal do
   `XSD.Datatype` for XSD decimals.
   """
 
-  use XSD.Datatype, name: "decimal"
+  use XSD.Datatype.Definition, name: "decimal"
 
   alias Elixir.Decimal, as: D
 

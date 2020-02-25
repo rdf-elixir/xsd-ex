@@ -3,7 +3,7 @@ defmodule XSD.Boolean do
   `XSD.Datatype` for XSD booleans.
   """
 
-  use XSD.Datatype, name: "boolean"
+  use XSD.Datatype.Definition, name: "boolean"
 
   @impl XSD.Datatype
   def lexical_mapping(lexical, _) do

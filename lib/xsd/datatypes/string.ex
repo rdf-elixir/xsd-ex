@@ -3,7 +3,7 @@ defmodule XSD.String do
   `XSD.Datatype` for XSD strings.
   """
 
-  use XSD.Datatype, name: "string"
+  use XSD.Datatype.Definition, name: "string"
 
   @impl XSD.Datatype
   def lexical_mapping(lexical, _), do: to_string(lexical)
