@@ -259,7 +259,7 @@ defmodule XSD.EqualityTest do
   end
 
   defp assert_term_equality({left, right}, expected) do
-    result = XSD.Value.equal?(left, right)
+    result = XSD.Literal.equal?(left, right)
 
     assert result == expected, """
     expected XSD.Term.equal?(
@@ -269,7 +269,7 @@ defmodule XSD.EqualityTest do
     but got: #{inspect(result)}
     """
 
-    result = XSD.Value.equal?(right, left)
+    result = XSD.Literal.equal?(right, left)
 
     assert result == expected, """
     expected XSD.Term.equal?(
@@ -281,7 +281,7 @@ defmodule XSD.EqualityTest do
   end
 
   defp assert_value_equality({left, right}, expected) do
-    result = XSD.Value.equal_value?(left, right)
+    result = XSD.Literal.equal_value?(left, right)
 
     assert result == expected, """
     expected XSD.Term.equal_value?(
@@ -291,7 +291,7 @@ defmodule XSD.EqualityTest do
     but got: #{inspect(result)}
     """
 
-    result = XSD.Value.equal_value?(right, left)
+    result = XSD.Literal.equal_value?(right, left)
 
     assert result == expected, """
     expected XSD.Term.equal_value?(

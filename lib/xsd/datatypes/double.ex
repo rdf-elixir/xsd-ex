@@ -88,7 +88,7 @@ defmodule XSD.Double do
   end
 
   @impl XSD.Datatype
-  def cast(xsd_typed_value)
+  def cast(literal)
 
   # Invalid values can not be casted in general
   def cast(%{value: @invalid_value}), do: @invalid_value

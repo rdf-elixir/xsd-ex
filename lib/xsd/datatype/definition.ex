@@ -35,10 +35,10 @@ defmodule XSD.Datatype.Definition do
       end
 
       def new!(value, opts \\ []) do
-        xsd_value = new(value, opts)
+        literal = new(value, opts)
 
-        if valid?(xsd_value) do
-          xsd_value
+        if valid?(literal) do
+          literal
         else
           raise ArgumentError, "#{inspect(value)} is not a valid #{inspect(__MODULE__)}"
         end
@@ -81,8 +81,8 @@ defmodule XSD.Datatype.Definition do
       def canonical_lexical(%__MODULE__{value: value, uncanonical_lexical: nil}),
         do: canonical_mapping(value)
 
-      def canonical_lexical(%__MODULE__{} = value),
-        do: value |> canonical() |> lexical()
+      def canonical_lexical(%__MODULE__{} = literal),
+        do: literal |> canonical() |> lexical()
 
       def canonical_lexical(_), do: nil
 
@@ -95,17 +95,17 @@ defmodule XSD.Datatype.Definition do
       def init_invalid_lexical(value, _opts), do: to_string(value)
 
       @impl XSD.Datatype
-      def canonical(xsd_value)
+      def canonical(literal)
 
-      def canonical(%__MODULE__{uncanonical_lexical: nil} = xsd_value), do: xsd_value
+      def canonical(%__MODULE__{uncanonical_lexical: nil} = literal), do: literal
 
-      def canonical(%__MODULE__{value: @invalid_value} = xsd_value), do: xsd_value
+      def canonical(%__MODULE__{value: @invalid_value} = literal), do: literal
 
-      def canonical(%__MODULE__{} = xsd_value),
-        do: %__MODULE__{xsd_value | uncanonical_lexical: nil}
+      def canonical(%__MODULE__{} = literal),
+        do: %__MODULE__{literal | uncanonical_lexical: nil}
 
       @impl XSD.Datatype
-      def valid?(xsd_value)
+      def valid?(literal)
       def valid?(%__MODULE__{value: @invalid_value}), do: false
       def valid?(%__MODULE__{}), do: true
       def valid?(_), do: false
@@ -114,7 +114,7 @@ defmodule XSD.Datatype.Definition do
       defp validate_cast(_), do: nil
 
       @impl XSD.Datatype
-      def equal_value?(value1, value2)
+      def equal_value?(literal1, literal2)
 
       def equal_value?(
             %datatype{uncanonical_lexical: lexical1, value: nil},
@@ -123,8 +123,8 @@ defmodule XSD.Datatype.Definition do
         lexical1 == lexical2
       end
 
-      def equal_value?(%datatype{} = value1, %datatype{} = value2) do
-        canonical(value1).value == canonical(value2).value
+      def equal_value?(%datatype{} = literal1, %datatype{} = literal2) do
+        canonical(literal1).value == canonical(literal2).value
       end
 
       def equal_value?(_, _), do: false
@@ -146,9 +146,9 @@ defmodule XSD.Datatype.Definition do
 
       def compare(_, _), do: nil
 
-      def less_than?(literal1, literal2), do: XSD.Value.less_than?(literal1, literal2)
+      def less_than?(literal1, literal2), do: XSD.Literal.less_than?(literal1, literal2)
 
-      def greater_than?(literal1, literal2), do: XSD.Value.greater_than?(literal1, literal2)
+      def greater_than?(literal1, literal2), do: XSD.Literal.greater_than?(literal1, literal2)
 
       defoverridable canonical_mapping: 1,
                      init_valid_lexical: 3,

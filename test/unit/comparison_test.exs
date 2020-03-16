@@ -234,7 +234,7 @@ defmodule XSD.ComparisonTest do
   end
 
   defp assert_compare_result({left, right}, expected) do
-    result = XSD.Value.compare(left, right)
+    result = XSD.Literal.compare(left, right)
 
     assert result == expected, """
     expected XSD.Literal.compare(
@@ -246,7 +246,7 @@ defmodule XSD.ComparisonTest do
   end
 
   defp assert_less_than({left, right}, expected) do
-    result = XSD.Value.less_than?(left, right)
+    result = XSD.Literal.less_than?(left, right)
 
     assert result == expected, """
     expected XSD.Literal.less_than?(
@@ -258,7 +258,7 @@ defmodule XSD.ComparisonTest do
   end
 
   defp assert_greater_than({left, right}, expected) do
-    result = XSD.Value.greater_than?(left, right)
+    result = XSD.Literal.greater_than?(left, right)
 
     assert result == expected, """
     expected XSD.Literal.greater_than?(

@@ -25,7 +25,7 @@ defmodule XSD.Datatype do
   @callback id :: String.t()
 
   @doc """
-  Determines if the lexical form of a `XSD.Datatype` is a member of its lexical value space.
+  Determines if the lexical form of a `XSD.Datatype` literal is a member of its lexical value space.
   """
   @callback valid?(any) :: boolean
 
@@ -35,31 +35,33 @@ defmodule XSD.Datatype do
   @callback lexical(any) :: String.t()
 
   @doc """
-  Produces the canonical representation of a `XSD.Datatype` value.
+  Produces the canonical representation of a `XSD.Datatype` literal.
   """
   @callback canonical(any) :: any
 
   @doc """
-  Casts a `XSD.Datatype` value of one type into a `XSD.Datatype` value of another type.
+  Casts a `XSD.Datatype` literal of one type into a `XSD.Datatype` literal of another type.
 
-  If the given value is invalid or can not be converted into this datatype an
+  If the given literal is invalid or can not be converted into this datatype an
   implementation should return `@invalid_value`.
   """
   @callback cast(any) :: any
 
   @doc """
-  Checks if two value `XSD.Datatype` values are equal.
+  Checks if two `XSD.Datatype` literals are equal in terms of the values of their value space.
+
+  Non-`XSD.Datatype` literals are tried to be coerced via `RDF.Term.coerce/1` before comparison.
 
   The default implementation of the `_using__` macro compares the values of the
-  `canonical/1` forms of the given value of this datatype.
+  `canonical/1` forms of the given literal of this datatype.
   """
-  @callback equal_value?(value1 :: any, value2 :: any) :: boolean
+  @callback equal_value?(literal1 :: any, literal2 :: any) :: boolean
 
   @doc """
-  Compares two `XSD.Datatype` values.
+  Compares two `XSD.Datatype` literals.
 
-  Returns `:gt` if first value is greater than the second in terms of their datatype
-  and `:lt` for vice versa. If the two values are equal `:eq` is returned.
+  Returns `:gt` if value of the first literal is greater than the value of the second in
+  terms of their datatype and `:lt` for vice versa. If the two literals are equal `:eq` is returned.
   For datatypes with only partial ordering `:indeterminate` is returned when the
   order of the given literals is not defined.
 
@@ -67,9 +69,10 @@ defmodule XSD.Datatype do
   them is invalid.
 
   The default implementation of the `_using__` macro compares the values of the
-  `canonical/1` forms of the given values of this datatype.
+  `canonical/1` forms of the given literals of this datatype.
   """
-  @callback compare(value1 :: any, value2 :: any) :: :lt | :gt | :eq | :indeterminate | nil
+  @callback compare(literal1 :: any, literal2 :: any) :: :lt | :gt | :eq | :indeterminate | nil
+
 
   @doc """
   A mapping from the lexical space of a `XSD.Datatype` into its value space.
@@ -87,7 +90,7 @@ defmodule XSD.Datatype do
   @callback canonical_mapping(any) :: String.t()
 
   @doc """
-  Returns the lexical representation to be used as for a `XSD.Datatype`.
+  Produces the lexical representation to be used as for a `XSD.Datatype` literal.
 
   If the lexical representation for a given `value` and `lexical` should be the
   canonical one, an implementation should return `nil`.

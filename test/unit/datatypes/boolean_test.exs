@@ -123,8 +123,8 @@ defmodule XSD.BooleanTest do
         XSD.boolean(1),
         XSD.boolean("0")
       ]
-      |> Enum.each(fn value ->
-        assert ebv(value) == value
+      |> Enum.each(fn literal ->
+        assert ebv(literal) == literal
       end)
     end
 
@@ -134,8 +134,8 @@ defmodule XSD.BooleanTest do
         XSD.integer(3.14),
         XSD.double("Foo")
       ]
-      |> Enum.each(fn value ->
-        assert ebv(value) == XSD.false()
+      |> Enum.each(fn literal ->
+        assert ebv(literal) == XSD.false()
       end)
     end
 
@@ -147,7 +147,7 @@ defmodule XSD.BooleanTest do
       assert ebv(XSD.string("bar")) == XSD.true()
     end
 
-    test "if the argument is a numeric type with a valid lexical form having the value NaN or being numerically equal to zero, the EBV is false" do
+    test "if the argument is a numeric literal with a valid lexical form having the value NaN or being numerically equal to zero, the EBV is false" do
       [
         XSD.integer(0),
         XSD.integer("0"),
@@ -156,8 +156,8 @@ defmodule XSD.BooleanTest do
         XSD.double(:nan),
         XSD.double("NaN")
       ]
-      |> Enum.each(fn value ->
-        assert ebv(value) == XSD.false()
+      |> Enum.each(fn literal ->
+        assert ebv(literal) == XSD.false()
       end)
     end
 

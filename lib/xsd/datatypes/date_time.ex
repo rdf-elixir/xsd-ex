@@ -59,7 +59,7 @@ defmodule XSD.DateTime do
   def canonical_mapping(%NaiveDateTime{} = value), do: NaiveDateTime.to_iso8601(value)
 
   @impl XSD.Datatype
-  def cast(xsd_typed_value)
+  def cast(literal)
 
   # Invalid values can not be casted in general
   def cast(%{value: @invalid_value}), do: @invalid_value

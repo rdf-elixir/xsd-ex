@@ -20,10 +20,10 @@ defmodule XSD.Numeric do
   def datatype?(datatype), do: MapSet.member?(@datatypes, datatype)
 
   @doc """
-  Returns if a given XSD value has a numeric datatype.
+  Returns if a given XSD literal has a numeric datatype.
   """
-  def value?(%datatype{}), do: datatype?(datatype)
-  def value?(_), do: false
+  def literal?(%datatype{}), do: datatype?(datatype)
+  def literal?(_), do: false
 
   def equal_value?(left, right)
 

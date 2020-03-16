@@ -24,7 +24,7 @@ defmodule XSD.Boolean do
   def elixir_mapping(_, _), do: @invalid_value
 
   @impl XSD.Datatype
-  def cast(xsd_typed_value)
+  def cast(literal)
 
   # Invalid values can not be casted in general
   def cast(%{value: @invalid_value}), do: @invalid_value
@@ -42,9 +42,9 @@ defmodule XSD.Boolean do
     !Decimal.equal?(xsd_decimal.value, 0) |> new()
   end
 
-  def cast(value) do
-    if XSD.Numeric.value?(value) do
-      new(value.value not in [0, 0.0, :nan])
+  def cast(literal) do
+    if XSD.Numeric.literal?(literal) do
+      new(literal.value not in [0, 0.0, :nan])
     else
       @invalid_value
     end
@@ -78,17 +78,17 @@ defmodule XSD.Boolean do
       else: XSD.Boolean.Value.true()
   end
 
-  def ebv(%datatype{} = value) do
+  def ebv(%datatype{} = literal) do
     if XSD.Numeric.datatype?(datatype) do
-      if XSD.Value.valid?(value) and
-           not (value.value == 0 or value.value == :nan),
+      if XSD.Literal.valid?(literal) and
+           not (literal.value == 0 or literal.value == :nan),
          do: XSD.Boolean.Value.true(),
          else: XSD.Boolean.Value.false()
     end
   end
 
   def ebv(value) when is_binary(value) or is_number(value) do
-    value |> XSD.Value.coerce() |> ebv()
+    value |> XSD.Literal.coerce() |> ebv()
   end
 
   def ebv(_), do: nil

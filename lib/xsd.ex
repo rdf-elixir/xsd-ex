@@ -31,13 +31,13 @@ defmodule XSD do
   def datatype?(datatype), do: datatype in @datatypes
 
   @doc """
-  Returns if a given value is a `XSD.datatype`.
+  Returns if a given argument is a `XSD.datatype` literal.
   """
-  def value?(%datatype{}), do: datatype?(datatype)
-  def value?(_), do: false
+  def literal?(%datatype{}), do: datatype?(datatype)
+  def literal?(_), do: false
 
-  defdelegate equal?(left, right), to: XSD.Value
-  defdelegate equal_value?(left, right), to: XSD.Value
+  defdelegate equal?(left, right), to: XSD.Literal
+  defdelegate equal_value?(left, right), to: XSD.Literal
 
   Enum.each(@datatypes, fn datatype ->
     defdelegate unquote(String.to_atom(datatype.name))(value), to: datatype, as: :new

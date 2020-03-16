@@ -72,7 +72,7 @@ defmodule XSD.Decimal do
     do: D.to_string(decimal, :normal)
 
   @impl XSD.Datatype
-  def cast(xsd_typed_value)
+  def cast(literal)
 
   # Invalid values can not be casted in general
   def cast(%{value: @invalid_value}), do: @invalid_value

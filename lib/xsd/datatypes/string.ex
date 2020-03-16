@@ -12,7 +12,7 @@ defmodule XSD.String do
   def elixir_mapping(value, _), do: to_string(value)
 
   @impl XSD.Datatype
-  def cast(xsd_typed_value)
+  def cast(literal)
 
   # Invalid values can not be casted in general
   def cast(%{value: @invalid_value}), do: @invalid_value
@@ -61,9 +61,9 @@ defmodule XSD.String do
     |> new()
   end
 
-  def cast(%datatype{} = value) do
+  def cast(%datatype{} = literal) do
     if XSD.datatype?(datatype) do
-      default_canonical_cast(value, datatype)
+      default_canonical_cast(literal, datatype)
     else
       @invalid_value
     end
@@ -71,8 +71,8 @@ defmodule XSD.String do
 
   def cast(_), do: @invalid_value
 
-  defp default_canonical_cast(value, datatype) do
-    value
+  defp default_canonical_cast(literal, datatype) do
+    literal
     |> datatype.canonical_lexical()
     |> new()
   end

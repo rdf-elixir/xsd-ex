@@ -1,4 +1,4 @@
-defmodule XSD.Value do
+defmodule XSD.Literal do
   @datatypes XSD.datatypes()
 
   def coerce(value)
@@ -30,7 +30,7 @@ defmodule XSD.Value do
   def compare(_, _), do: nil
 
   @doc """
-  Checks if the first of two `XSD.Datatype` values is smaller then the other.
+  Checks if the first of two `XSD.Datatype` literals is smaller then the other.
 
   Returns `nil` when the given arguments are not comparable datatypes.
   """
@@ -43,7 +43,7 @@ defmodule XSD.Value do
   end
 
   @doc """
-  Checks if the first of two `XSD.Datatype` values is greater then the other.
+  Checks if the first of two `XSD.Datatype` literals is greater then the other.
 
   Returns `nil` when the given arguments are not comparable datatypes.
   """
