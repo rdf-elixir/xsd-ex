@@ -1,4 +1,4 @@
-defmodule XSD.Datatype.Definition do
+defmodule XSD.Datatype.Primitive do
   defmacro __using__(opts) do
     name = Keyword.fetch!(opts, :name)
 

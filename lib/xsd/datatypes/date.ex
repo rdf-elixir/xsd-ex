@@ -5,7 +5,7 @@ defmodule XSD.Date do
 
   @type valid_value :: Date.t() | {Date.t(), String.t()}
 
-  use XSD.Datatype.Definition, name: "date"
+  use XSD.Datatype.Primitive, name: "date"
 
   @grammar ~r/\A(-?\d{4}-\d{2}-\d{2})((?:[\+\-]\d{2}:\d{2})|UTC|GMT|Z)?\Z/
   @tz_grammar ~r/\A((?:[\+\-]\d{2}:\d{2})|UTC|GMT|Z)\Z/

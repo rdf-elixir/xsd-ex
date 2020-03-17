@@ -5,7 +5,7 @@ defmodule XSD.Decimal do
 
   @type valid_value :: Decimal.t()
 
-  use XSD.Datatype.Definition, name: "decimal"
+  use XSD.Datatype.Primitive, name: "decimal"
 
   alias Elixir.Decimal, as: D
 

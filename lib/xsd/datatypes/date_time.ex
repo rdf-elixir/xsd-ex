@@ -5,7 +5,7 @@ defmodule XSD.DateTime do
 
   @type valid_value :: DateTime.t() | NaiveDateTime.t()
 
-  use XSD.Datatype.Definition, name: "dateTime"
+  use XSD.Datatype.Primitive, name: "dateTime"
 
   @impl XSD.Datatype
   def lexical_mapping(lexical, opts) do

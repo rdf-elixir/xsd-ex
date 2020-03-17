@@ -6,7 +6,7 @@ defmodule XSD.Boolean do
   @type valid_value :: boolean
   @type input_value :: XSD.Literal.t() | valid_value | number | String.t() | any
 
-  use XSD.Datatype.Definition, name: "boolean"
+  use XSD.Datatype.Primitive, name: "boolean"
 
   @impl XSD.Datatype
   def lexical_mapping(lexical, _) do

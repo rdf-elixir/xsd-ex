@@ -6,7 +6,7 @@ defmodule XSD.Double do
   @type special_values :: :positive_infinity | :negative_infinity | :nan
   @type valid_value :: float | special_values
 
-  use XSD.Datatype.Definition, name: "double"
+  use XSD.Datatype.Primitive, name: "double"
 
   @special_values ~W[positive_infinity negative_infinity nan]a
 

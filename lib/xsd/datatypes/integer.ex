@@ -5,7 +5,7 @@ defmodule XSD.Integer do
 
   @type valid_value :: integer
 
-  use XSD.Datatype.Definition, name: "integer"
+  use XSD.Datatype.Primitive, name: "integer"
 
   @impl XSD.Datatype
   def lexical_mapping(lexical, _) do

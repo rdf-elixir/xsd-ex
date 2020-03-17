@@ -1,6 +1,6 @@
 defmodule XSD.Datatype do
   @moduledoc """
-  A behaviour for the definition of XSD datatypes.
+  The behaviour of all XSD datatypes.
   """
 
   @type t :: module

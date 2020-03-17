@@ -5,7 +5,7 @@ defmodule XSD.Time do
 
   @type valid_value :: Time.t() | {Time.t(), true}
 
-  use XSD.Datatype.Definition, name: "time"
+  use XSD.Datatype.Primitive, name: "time"
 
   @grammar ~r/\A(\d{2}:\d{2}:\d{2}(?:\.\d+)?)((?:[\+\-]\d{2}:\d{2})|UTC|GMT|Z)?\Z/
   @tz_number_grammar ~r/\A(?:([\+\-])(\d{2}):(\d{2}))\Z/

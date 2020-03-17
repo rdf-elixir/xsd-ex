@@ -5,7 +5,7 @@ defmodule XSD.String do
 
   @type valid_value :: String.t()
 
-  use XSD.Datatype.Definition, name: "string"
+  use XSD.Datatype.Primitive, name: "string"
 
   @impl XSD.Datatype
   @spec lexical_mapping(String.t(), Keyword.t()) :: valid_value
