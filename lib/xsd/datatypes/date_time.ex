@@ -3,6 +3,8 @@ defmodule XSD.DateTime do
   `XSD.Datatype` for XSD dateTimes.
   """
 
+  @type valid_value :: DateTime.t() | NaiveDateTime.t()
+
   use XSD.Datatype.Definition, name: "dateTime"
 
   @impl XSD.Datatype
@@ -44,6 +46,7 @@ defmodule XSD.DateTime do
   end
 
   @impl XSD.Datatype
+  @spec elixir_mapping(valid_value | any, Keyword.t()) :: value
   def elixir_mapping(value, _)
   # Special case for date and dateTime, for which 0 is not a valid year
   def elixir_mapping(%DateTime{year: 0}, _), do: @invalid_value
@@ -54,15 +57,16 @@ defmodule XSD.DateTime do
   def elixir_mapping(_, _), do: @invalid_value
 
   @impl XSD.Datatype
+  @spec canonical_mapping(valid_value) :: String.t()
   def canonical_mapping(value)
   def canonical_mapping(%DateTime{} = value), do: DateTime.to_iso8601(value)
   def canonical_mapping(%NaiveDateTime{} = value), do: NaiveDateTime.to_iso8601(value)
 
   @impl XSD.Datatype
-  def cast(literal)
+  def cast(literal_or_value)
 
   # Invalid values can not be casted in general
-  def cast(%{value: @invalid_value}), do: @invalid_value
+  def cast(%{value: @invalid_value}), do: nil
 
   def cast(%__MODULE__{} = xsd_datetime), do: xsd_datetime
 
@@ -83,11 +87,18 @@ defmodule XSD.DateTime do
     |> validate_cast()
   end
 
-  def cast(_), do: @invalid_value
+  def cast(nil), do: nil
+
+  def cast(value) do
+    unless XSD.literal?(value) do
+      value |> XSD.Literal.coerce() |> cast()
+    end
+  end
 
   @doc """
   Extracts the timezone string from a `XSD.DateTime` value.
   """
+  @spec tz(t()) :: String.t() | nil
   def tz(xsd_datetime)
 
   def tz(%__MODULE__{value: %NaiveDateTime{}}), do: ""
@@ -103,6 +114,7 @@ defmodule XSD.DateTime do
   @doc """
   Converts a datetime literal to a canonical string, preserving the zone information.
   """
+  @spec canonical_lexical_with_zone(t()) :: String.t() | nil
   def canonical_lexical_with_zone(%__MODULE__{} = xsd_datetime) do
     case tz(xsd_datetime) do
       nil ->

@@ -97,8 +97,16 @@ defmodule XSD.StringTest do
       assert XSD.double(true) |> XSD.String.cast() == nil
     end
 
-    test "with non-XSD-typed values" do
+    test "with coercible value" do
+      assert XSD.String.cast(42) == XSD.string("42")
+      assert XSD.String.cast(3.14) == XSD.string("3.14")
+      assert XSD.String.cast(true) == XSD.string("true")
+      assert XSD.String.cast(false) == XSD.string("false")
+    end
+
+    test "with non-coercible value" do
       assert XSD.String.cast(:foo) == nil
+      assert XSD.String.cast(make_ref()) == nil
     end
   end
 end

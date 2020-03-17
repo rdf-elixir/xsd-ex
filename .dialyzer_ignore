@@ -1,0 +1,17 @@
+# These errors are raised due to code paths in the generated general new/2 implementation
+# of XSD.Datatype.Primitive because of the particular elixir_mapping/2 implementations
+:9: The pattern {_@3, _@4} can never match the type boolean()
+:8: The pattern {_@3, _@4} can never match the type #{'__struct__':='Elixir.DateTime' | 'Elixir.NaiveDateTime', 'calendar':=atom(), 'day':=pos_integer(), 'hour':=non_neg_integer(), 'microsecond':={non_neg_integer(),non_neg_integer()}, 'minute':=non_neg_integer(), 'month':=pos_integer(), 'second':=non_neg_integer(), 'year':=integer(), 'std_offset'=>integer(), 'time_zone'=>binary(), 'utc_offset'=>integer(), 'zone_abbr'=>binary()}
+:8: The pattern {_@3, _@4} can never match the type #{'__struct__':='Elixir.Decimal', 'coef':=non_neg_integer(), 'exp':=integer(), 'sign':=-1 | 1}
+:9: The pattern {_@3, _@4} can never match the type 'nan' | 'negative_infinity' | 'positive_infinity' | float()
+:9: The pattern {_@3, _@4} can never match the type integer()
+:8: The pattern {_@3, _@4} can never match the type binary()
+:8: Function build_invalid/2 will never be called
+:8: The pattern 'nil' can never match the type binary()
+
+# Similarly here, but in another generated function (yet unknown which one in particular)
+:9: The variable _ can never match since previous clauses completely covered the type #{'__struct__':='Elixir.XSD.Boolean', 'uncanonical_lexical':='nil' | binary(), 'value':='false' | 'nil' | 'true'}
+:8: The variable _ can never match since previous clauses completely covered the type #{'__struct__':='Elixir.XSD.DateTime', 'uncanonical_lexical':='nil' | binary(), 'value':='nil' | #{'__struct__':='Elixir.DateTime' | 'Elixir.NaiveDateTime', 'calendar':=atom(), 'day':=pos_integer(), 'hour':=non_neg_integer(), 'microsecond':={_,_}, 'minute':=non_neg_integer(), 'month':=pos_integer(), 'second':=non_neg_integer(), 'year':=integer(), 'std_offset'=>integer(), 'time_zone'=>binary(), 'utc_offset'=>integer(), 'zone_abbr'=>binary()}}
+:8: The variable _ can never match since previous clauses completely covered the type #{'__struct__':='Elixir.XSD.Decimal', 'uncanonical_lexical':='nil' | binary(), 'value':='nil' | #{'__struct__':='Elixir.Decimal', 'coef':='inf' | 'qNaN' | 'sNaN' | non_neg_integer(), 'exp':=integer(), 'sign':=-1 | 1}}
+:9: The variable _ can never match since previous clauses completely covered the type #{'__struct__':='Elixir.XSD.Double', 'uncanonical_lexical':='nil' | binary(), 'value':='nan' | 'negative_infinity' | 'nil' | 'positive_infinity' | float()}
+:9: The variable _ can never match since previous clauses completely covered the type #{'__struct__':='Elixir.XSD.Integer', 'uncanonical_lexical':='nil' | binary(), 'value':='nil' | integer()}

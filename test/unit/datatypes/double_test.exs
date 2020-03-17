@@ -79,8 +79,13 @@ defmodule XSD.DoubleTest do
       assert XSD.date("2020-01-01") |> XSD.Double.cast() == nil
     end
 
-    test "with non-XSD-typed values" do
+    test "with coercible value" do
+      assert XSD.Double.cast("3.14") == XSD.double(3.14) |> XSD.Double.canonical()
+    end
+
+    test "with non-coercible value" do
       assert XSD.Double.cast(:foo) == nil
+      assert XSD.Double.cast(make_ref()) == nil
     end
   end
 

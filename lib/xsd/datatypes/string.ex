@@ -3,19 +3,23 @@ defmodule XSD.String do
   `XSD.Datatype` for XSD strings.
   """
 
+  @type valid_value :: String.t()
+
   use XSD.Datatype.Definition, name: "string"
 
   @impl XSD.Datatype
+  @spec lexical_mapping(String.t(), Keyword.t()) :: valid_value
   def lexical_mapping(lexical, _), do: to_string(lexical)
 
   @impl XSD.Datatype
+  @spec elixir_mapping(any, Keyword.t()) :: value
   def elixir_mapping(value, _), do: to_string(value)
 
   @impl XSD.Datatype
-  def cast(literal)
+  def cast(literal_or_value)
 
   # Invalid values can not be casted in general
-  def cast(%{value: @invalid_value}), do: @invalid_value
+  def cast(%{value: @invalid_value}), do: nil
 
   def cast(%__MODULE__{} = xsd_string), do: xsd_string
 
@@ -64,12 +68,16 @@ defmodule XSD.String do
   def cast(%datatype{} = literal) do
     if XSD.datatype?(datatype) do
       default_canonical_cast(literal, datatype)
-    else
-      @invalid_value
     end
   end
 
-  def cast(_), do: @invalid_value
+  def cast(nil), do: nil
+
+  def cast(value) do
+    unless XSD.literal?(value) do
+      value |> XSD.Literal.coerce() |> cast()
+    end
+  end
 
   defp default_canonical_cast(literal, datatype) do
     literal

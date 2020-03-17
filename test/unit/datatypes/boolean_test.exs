@@ -81,9 +81,18 @@ defmodule XSD.BooleanTest do
       assert XSD.date("2020-01-01") |> XSD.Boolean.cast() == nil
     end
 
-    test "with non-XSD-typed value" do
+    test "with coercible value" do
+      assert XSD.Boolean.cast(0) == XSD.false()
+      assert XSD.Boolean.cast(0.0) == XSD.false()
+      assert XSD.Boolean.cast(42) == XSD.true()
+      assert XSD.Boolean.cast(3.14) == XSD.true()
+      assert XSD.Boolean.cast("true") == XSD.true()
+      assert XSD.Boolean.cast("false") == XSD.false()
+    end
+
+    test "with non-coercible value" do
       assert XSD.Boolean.cast(:foo) == nil
-      assert XSD.Boolean.cast(42) == nil
+      assert XSD.Boolean.cast(make_ref()) == nil
     end
   end
 

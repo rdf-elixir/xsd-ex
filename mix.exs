@@ -8,7 +8,10 @@ defmodule XSD.MixProject do
       elixir: "~> 1.9",
       start_permanent: Mix.env() == :prod,
       deps: deps(),
-      elixirc_paths: elixirc_paths(Mix.env())
+      elixirc_paths: elixirc_paths(Mix.env()),
+
+      # Dialyzer
+      dialyzer: dialyzer()
     ]
   end
 
@@ -20,7 +23,14 @@ defmodule XSD.MixProject do
 
   defp deps do
     [
-      {:decimal, "~> 1.8"}
+      {:decimal, "~> 1.8"},
+      {:dialyxir, "~> 1.0.0-rc.7", only: :dev, runtime: false}
+    ]
+  end
+
+  defp dialyzer do
+    [
+      ignore_warnings: ".dialyzer_ignore"
     ]
   end
 

@@ -138,8 +138,13 @@ defmodule XSD.TimeTest do
       assert XSD.decimal(3.14) |> XSD.Time.cast() == nil
     end
 
-    test "with non-XSD-typed values" do
+    test "with coercible value" do
+      assert XSD.Time.cast("01:00:00") == XSD.time("01:00:00")
+    end
+
+    test "with non-coercible value" do
       assert XSD.Time.cast(:foo) == nil
+      assert XSD.Time.cast(make_ref()) == nil
     end
   end
 

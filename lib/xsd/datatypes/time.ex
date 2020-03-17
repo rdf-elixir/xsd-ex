@@ -3,6 +3,8 @@ defmodule XSD.Time do
   `XSD.Datatype` for XSD times.
   """
 
+  @type valid_value :: Time.t() | {Time.t(), true}
+
   use XSD.Datatype.Definition, name: "time"
 
   @grammar ~r/\A(\d{2}:\d{2}:\d{2}(?:\.\d+)?)((?:[\+\-]\d{2}:\d{2})|UTC|GMT|Z)?\Z/
@@ -37,6 +39,8 @@ defmodule XSD.Time do
   end
 
   @impl XSD.Datatype
+  @spec elixir_mapping(valid_value | any, Keyword.t()) ::
+          value | {value, XSD.Datatype.uncanonical_lexical()}
   def elixir_mapping(value, opts)
 
   def elixir_mapping(%Time{} = value, opts) do
@@ -83,18 +87,19 @@ defmodule XSD.Time do
   end
 
   @impl XSD.Datatype
+  @spec canonical_mapping(valid_value) :: String.t()
   def canonical_mapping(value)
   def canonical_mapping(%Time{} = value), do: Time.to_iso8601(value)
   def canonical_mapping({%Time{} = value, true}), do: canonical_mapping(value) <> "Z"
 
   @impl XSD.Datatype
+  @spec init_valid_lexical(valid_value, XSD.Datatype.uncanonical_lexical(), Keyword.t()) ::
+          XSD.Datatype.uncanonical_lexical()
   def init_valid_lexical(value, lexical, opts)
 
   def init_valid_lexical({value, _}, nil, opts) do
     if tz = Keyword.get(opts, :tz) do
       canonical_mapping(value) <> tz
-    else
-      nil
     end
   end
 
@@ -113,6 +118,7 @@ defmodule XSD.Time do
   end
 
   @impl XSD.Datatype
+  @spec init_invalid_lexical(any, Keyword.t()) :: String.t()
   def init_invalid_lexical(value, opts)
 
   def init_invalid_lexical({time, tz}, opts) do
@@ -134,10 +140,10 @@ defmodule XSD.Time do
   end
 
   @impl XSD.Datatype
-  def cast(literal)
+  def cast(literal_or_value)
 
   # Invalid values can not be casted in general
-  def cast(%{value: @invalid_value}), do: @invalid_value
+  def cast(%{value: @invalid_value}), do: nil
 
   def cast(%__MODULE__{} = xsd_date), do: xsd_date
 
@@ -160,7 +166,13 @@ defmodule XSD.Time do
 
   def cast(%XSD.String{} = xsd_string), do: new(xsd_string.value)
 
-  def cast(_), do: @invalid_value
+  def cast(nil), do: nil
+
+  def cast(value) do
+    unless XSD.literal?(value) do
+      value |> XSD.Literal.coerce() |> cast()
+    end
+  end
 
   @doc """
   Extracts the timezone string from a `XSD.Time` value.

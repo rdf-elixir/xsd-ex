@@ -3,6 +3,8 @@ defmodule XSD.Integer do
   `XSD.Datatype` for XSD integers.
   """
 
+  @type valid_value :: integer
+
   use XSD.Datatype.Definition, name: "integer"
 
   @impl XSD.Datatype
@@ -15,15 +17,16 @@ defmodule XSD.Integer do
   end
 
   @impl XSD.Datatype
+  @spec elixir_mapping(valid_value | any, Keyword.t()) :: value
   def elixir_mapping(value, _)
   def elixir_mapping(value, _) when is_integer(value), do: value
   def elixir_mapping(_, _), do: @invalid_value
 
   @impl XSD.Datatype
-  def cast(literal)
+  def cast(literal_or_value)
 
   # Invalid values can not be casted in general
-  def cast(%{value: @invalid_value}), do: @invalid_value
+  def cast(%{value: @invalid_value}), do: nil
 
   def cast(%__MODULE__{} = xsd_integer), do: xsd_integer
 
@@ -50,7 +53,13 @@ defmodule XSD.Integer do
     |> new()
   end
 
-  def cast(_), do: @invalid_value
+  def cast(nil), do: nil
+
+  def cast(value) do
+    unless XSD.literal?(value) do
+      value |> XSD.Literal.coerce() |> cast()
+    end
+  end
 
   @impl XSD.Datatype
   def equal_value?(left, right), do: XSD.Numeric.equal_value?(left, right)

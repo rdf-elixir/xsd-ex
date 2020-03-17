@@ -3,6 +3,9 @@ defmodule XSD.Boolean do
   `XSD.Datatype` for XSD booleans.
   """
 
+  @type valid_value :: boolean
+  @type input_value :: XSD.Literal.t() | valid_value | number | String.t() | any
+
   use XSD.Datatype.Definition, name: "boolean"
 
   @impl XSD.Datatype
@@ -17,6 +20,7 @@ defmodule XSD.Boolean do
   end
 
   @impl XSD.Datatype
+  @spec elixir_mapping(valid_value | integer | any, Keyword.t()) :: value
   def elixir_mapping(value, _)
   def elixir_mapping(value, _) when is_boolean(value), do: value
   def elixir_mapping(1, _), do: true
@@ -24,10 +28,10 @@ defmodule XSD.Boolean do
   def elixir_mapping(_, _), do: @invalid_value
 
   @impl XSD.Datatype
-  def cast(literal)
+  def cast(literal_or_value)
 
   # Invalid values can not be casted in general
-  def cast(%{value: @invalid_value}), do: @invalid_value
+  def cast(%{value: @invalid_value}), do: nil
 
   def cast(%__MODULE__{} = xsd_boolean), do: xsd_boolean
 
@@ -42,11 +46,19 @@ defmodule XSD.Boolean do
     !Decimal.equal?(xsd_decimal.value, 0) |> new()
   end
 
-  def cast(literal) do
-    if XSD.Numeric.literal?(literal) do
-      new(literal.value not in [0, 0.0, :nan])
-    else
-      @invalid_value
+  def cast(nil), do: nil
+
+  @dialyzer {:nowarn_function, cast: 1}
+  def cast(value) do
+    cond do
+      not XSD.literal?(value) ->
+        value |> XSD.Literal.coerce() |> cast()
+
+      XSD.Numeric.literal?(value) ->
+        new(value.value not in [0, 0.0, :nan])
+
+      true ->
+        nil
     end
   end
 
@@ -64,6 +76,7 @@ defmodule XSD.Boolean do
   - <https://www.w3.org/TR/sparql11-query/#ebv>
 
   """
+  @spec ebv(input_value) :: t() | nil
   def ebv(value)
 
   def ebv(true), do: XSD.Boolean.Value.true()
@@ -96,6 +109,7 @@ defmodule XSD.Boolean do
   @doc """
   Alias for `ebv/1`.
   """
+  @spec effective(input_value) :: t() | nil
   def effective(value), do: ebv(value)
 
   @doc """
@@ -125,6 +139,7 @@ defmodule XSD.Boolean do
 
   see <https://www.w3.org/TR/xpath-functions/#func-not>
   """
+  @spec fn_not(input_value) :: t() | nil
   def fn_not(value) do
     case ebv(value) do
       %__MODULE__{value: true} -> XSD.Boolean.Value.false()
@@ -156,6 +171,7 @@ defmodule XSD.Boolean do
   see <https://www.w3.org/TR/sparql11-query/#func-logical-and>
 
   """
+  @spec logical_and(input_value, input_value) :: t() | nil
   def logical_and(left, right) do
     case ebv(left) do
       %__MODULE__{value: false} ->
@@ -198,6 +214,7 @@ defmodule XSD.Boolean do
   see <https://www.w3.org/TR/sparql11-query/#func-logical-or>
 
   """
+  @spec logical_or(input_value, input_value) :: t() | nil
   def logical_or(left, right) do
     case ebv(left) do
       %__MODULE__{value: true} ->

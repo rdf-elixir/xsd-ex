@@ -9,6 +9,14 @@ defmodule XSD.Datatype.Definition do
 
       @invalid_value nil
 
+      @type invalid_value :: nil
+      @type value :: valid_value | invalid_value
+
+      @type t :: %__MODULE__{
+              value: value,
+              uncanonical_lexical: XSD.Datatype.uncanonical_lexical()
+            }
+
       @name unquote(name)
       @impl XSD.Datatype
       def name, do: @name
@@ -17,6 +25,7 @@ defmodule XSD.Datatype.Definition do
       @impl XSD.Datatype
       def id, do: @id
 
+      @spec new(any, Keyword.t()) :: t()
       def new(value, opts \\ [])
 
       def new(lexical, opts) when is_binary(lexical) do
@@ -34,6 +43,7 @@ defmodule XSD.Datatype.Definition do
         end
       end
 
+      @spec new!(any, Keyword.t()) :: t()
       def new!(value, opts \\ []) do
         literal = new(value, opts)
 
@@ -45,6 +55,7 @@ defmodule XSD.Datatype.Definition do
       end
 
       @doc false
+      @spec build_valid(any, XSD.Datatype.uncanonical_lexical(), Keyword.t()) :: t()
       def build_valid(value, lexical, opts) do
         if Keyword.get(opts, :canonicalize) do
           %__MODULE__{value: value}
@@ -95,6 +106,7 @@ defmodule XSD.Datatype.Definition do
       def init_invalid_lexical(value, _opts), do: to_string(value)
 
       @impl XSD.Datatype
+      @spec canonical(t()) :: t()
       def canonical(literal)
 
       def canonical(%__MODULE__{uncanonical_lexical: nil} = literal), do: literal
@@ -105,6 +117,7 @@ defmodule XSD.Datatype.Definition do
         do: %__MODULE__{literal | uncanonical_lexical: nil}
 
       @impl XSD.Datatype
+      @spec valid?(t() | any) :: boolean
       def valid?(literal)
       def valid?(%__MODULE__{value: @invalid_value}), do: false
       def valid?(%__MODULE__{}), do: true
@@ -130,6 +143,7 @@ defmodule XSD.Datatype.Definition do
       def equal_value?(_, _), do: false
 
       @impl XSD.Datatype
+      @spec compare(t, t) :: XSD.Datatype.comparison_result() | :indeterminate | nil
       def compare(left, right)
 
       def compare(
@@ -146,8 +160,10 @@ defmodule XSD.Datatype.Definition do
 
       def compare(_, _), do: nil
 
+      @spec less_than?(t, t) :: boolean | nil
       def less_than?(literal1, literal2), do: XSD.Literal.less_than?(literal1, literal2)
 
+      @spec greater_than?(t, t) :: boolean | nil
       def greater_than?(literal1, literal2), do: XSD.Literal.greater_than?(literal1, literal2)
 
       defoverridable canonical_mapping: 1,

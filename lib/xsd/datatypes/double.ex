@@ -3,6 +3,9 @@ defmodule XSD.Double do
   `XSD.Datatype` for XSD doubles.
   """
 
+  @type special_values :: :positive_infinity | :negative_infinity | :nan
+  @type valid_value :: float | special_values
+
   use XSD.Datatype.Definition, name: "double"
 
   @special_values ~W[positive_infinity negative_infinity nan]a
@@ -32,6 +35,7 @@ defmodule XSD.Double do
   end
 
   @impl XSD.Datatype
+  @spec elixir_mapping(valid_value | integer | any, Keyword.t()) :: value
   def elixir_mapping(value, _)
   def elixir_mapping(value, _) when is_float(value), do: value
   def elixir_mapping(value, _) when is_integer(value), do: value / 1
@@ -39,6 +43,8 @@ defmodule XSD.Double do
   def elixir_mapping(_, _), do: @invalid_value
 
   @impl XSD.Datatype
+  @spec init_valid_lexical(valid_value, XSD.Datatype.uncanonical_lexical(), Keyword.t()) ::
+          XSD.Datatype.uncanonical_lexical()
   def init_valid_lexical(value, lexical, opts)
   def init_valid_lexical(value, nil, _) when is_atom(value), do: nil
   def init_valid_lexical(value, nil, _), do: decimal_form(value)
@@ -47,6 +53,7 @@ defmodule XSD.Double do
   defp decimal_form(float), do: to_string(float)
 
   @impl XSD.Datatype
+  @spec canonical_mapping(valid_value) :: String.t()
   def canonical_mapping(value)
 
   # Produces the exponential form of a float
@@ -88,10 +95,10 @@ defmodule XSD.Double do
   end
 
   @impl XSD.Datatype
-  def cast(literal)
+  def cast(literal_or_value)
 
   # Invalid values can not be casted in general
-  def cast(%{value: @invalid_value}), do: @invalid_value
+  def cast(%{value: @invalid_value}), do: nil
 
   def cast(%__MODULE__{} = xsd_double), do: xsd_double
 
@@ -115,7 +122,13 @@ defmodule XSD.Double do
     |> new()
   end
 
-  def cast(_), do: @invalid_value
+  def cast(nil), do: nil
+
+  def cast(value) do
+    unless XSD.literal?(value) do
+      value |> XSD.Literal.coerce() |> cast()
+    end
+  end
 
   @impl XSD.Datatype
   def equal_value?(left, right), do: XSD.Numeric.equal_value?(left, right)

@@ -9,22 +9,33 @@ defmodule XSD.Numeric do
                XSD.Double
              ])
 
+  @type t :: XSD.Decimal.t() | XSD.Integer.t() | XSD.Double.t()
+
   @doc """
   The list of all numeric datatypes.
   """
+  @spec datatypes() :: [XSD.Datatype.t()]
+  # https://elixirforum.com/t/dialyzer-complaint-about-mapset-member-not-getting-proper-type-as-argument-possible-specs-bug-in-mapset/20780
+  @dialyzer {:nowarn_function, datatypes: 0}
   def datatypes(), do: MapSet.to_list(@datatypes)
 
   @doc """
   Returns if a given datatype is a numeric datatype.
   """
+  @spec datatype?(XSD.Datatype.t() | any) :: boolean
+  # https://elixirforum.com/t/dialyzer-complaint-about-mapset-member-not-getting-proper-type-as-argument-possible-specs-bug-in-mapset/20780
+  @dialyzer {:nowarn_function, datatype?: 1}
   def datatype?(datatype), do: MapSet.member?(@datatypes, datatype)
 
   @doc """
   Returns if a given XSD literal has a numeric datatype.
   """
+  @spec literal?(XSD.Literal.t() | any) :: boolean
+  def literal?(literal)
   def literal?(%datatype{}), do: datatype?(datatype)
   def literal?(_), do: false
 
+  @spec equal_value?(t() | any, t() | any) :: boolean
   def equal_value?(left, right)
 
   def equal_value?(
@@ -57,6 +68,7 @@ defmodule XSD.Numeric do
   defp new_decimal(value) when is_float(value), do: D.from_float(value)
   defp new_decimal(value), do: D.new(value)
 
+  @spec compare(t, t) :: XSD.Datatype.comparison_result() | nil
   def compare(left, right)
 
   def compare(
@@ -93,6 +105,8 @@ defmodule XSD.Numeric do
 
   def compare(_, _), do: nil
 
+  # probably caused by the ignored opaque MapSet.t type issue above
+  @dialyzer {:nowarn_function, compare_decimal_value: 2}
   defp compare_decimal_value(%D{} = left, %D{} = right), do: D.cmp(left, right)
 
   defp compare_decimal_value(%D{} = left, right),
@@ -103,11 +117,13 @@ defmodule XSD.Numeric do
 
   defp compare_decimal_value(_, _), do: nil
 
+  @spec zero?(any) :: boolean
   def zero?(%{value: value}), do: zero_value?(value)
   defp zero_value?(zero) when zero == 0, do: true
   defp zero_value?(%D{coef: 0}), do: true
   defp zero_value?(_), do: false
 
+  @spec negative_zero?(any) :: boolean
   def negative_zero?(%XSD.Double{value: zero, uncanonical_lexical: "-" <> _}) when zero == 0,
     do: true
 

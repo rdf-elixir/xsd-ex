@@ -3,6 +3,8 @@ defmodule XSD.Date do
   `XSD.Datatype` for XSD date.
   """
 
+  @type valid_value :: Date.t() | {Date.t(), String.t()}
+
   use XSD.Datatype.Definition, name: "date"
 
   @grammar ~r/\A(-?\d{4}-\d{2}-\d{2})((?:[\+\-]\d{2}:\d{2})|UTC|GMT|Z)?\Z/
@@ -29,6 +31,8 @@ defmodule XSD.Date do
   end
 
   @impl XSD.Datatype
+  @spec elixir_mapping(Date.t() | any, Keyword.t()) ::
+          value | {value, XSD.Datatype.uncanonical_lexical()}
   def elixir_mapping(value, opts)
 
   # Special case for date and dateTime, for which 0 is not a valid year
@@ -54,12 +58,15 @@ defmodule XSD.Date do
   defp timezone_mapping(tz), do: tz
 
   @impl XSD.Datatype
+  @spec canonical_mapping(valid_value) :: String.t()
   def canonical_mapping(value)
   def canonical_mapping(%Date{} = value), do: Date.to_iso8601(value)
   def canonical_mapping({%Date{} = value, "+00:00"}), do: canonical_mapping(value) <> "Z"
   def canonical_mapping({%Date{} = value, zone}), do: canonical_mapping(value) <> zone
 
   @impl XSD.Datatype
+  @spec init_valid_lexical(valid_value, XSD.Datatype.uncanonical_lexical(), Keyword.t()) ::
+          XSD.Datatype.uncanonical_lexical()
   def init_valid_lexical(value, lexical, opts)
 
   def init_valid_lexical({value, _}, nil, opts) do
@@ -85,6 +92,7 @@ defmodule XSD.Date do
   end
 
   @impl XSD.Datatype
+  @spec init_invalid_lexical(any, Keyword.t()) :: String.t()
   def init_invalid_lexical(value, opts)
 
   def init_invalid_lexical({date, tz}, opts) do
@@ -106,10 +114,10 @@ defmodule XSD.Date do
   end
 
   @impl XSD.Datatype
-  def cast(literal)
+  def cast(literal_or_value)
 
   # Invalid values can not be casted in general
-  def cast(%{value: @invalid_value}), do: @invalid_value
+  def cast(%{value: @invalid_value}), do: nil
 
   def cast(%__MODULE__{} = xsd_date), do: xsd_date
 
@@ -129,7 +137,13 @@ defmodule XSD.Date do
 
   def cast(%XSD.String{} = xsd_string), do: new(xsd_string.value)
 
-  def cast(_), do: @invalid_value
+  def cast(nil), do: nil
+
+  def cast(value) do
+    unless XSD.literal?(value) do
+      value |> XSD.Literal.coerce() |> cast()
+    end
+  end
 
   @impl XSD.Datatype
   def equal_value?(literal1, literal2)

@@ -1,6 +1,7 @@
 defmodule XSD.Utils.DateTime do
   @moduledoc false
 
+  @spec tz(String.t()) :: String.t()
   def tz(string) do
     case Regex.run(~r/([+-])(\d\d:\d\d)/, string) do
       [_, sign, zone] ->
