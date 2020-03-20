@@ -110,6 +110,10 @@ defmodule XSD.EqualityTest do
     test "value equality", do: assert_value_equal(@value_equal_numerics)
     test "value inequality", do: assert_value_unequal(@value_unequal_numerics)
     test "incomparability", do: assert_incomparable(@incomparable_numerics)
+
+    test "NaN is not equal to itself" do
+      refute XSD.Double.equal_value?(XSD.double(:nan), XSD.double(:nan))
+    end
   end
 
   describe "XSD.DateTime" do

@@ -50,7 +50,11 @@ defmodule XSD.Numeric do
       do: equal_decimal_value?(left, right)
 
   def equal_value?(%left_datatype{value: left}, %right_datatype{value: right}) do
-    XSD.datatype?(left_datatype) and XSD.datatype?(right_datatype) and left == right
+    XSD.datatype?(left_datatype) and
+      XSD.datatype?(right_datatype) and
+      left != :nan and
+      right != :nan and
+      left == right
   end
 
   def equal_value?(_, _), do: false
