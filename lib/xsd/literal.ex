@@ -2,6 +2,8 @@ defmodule XSD.Literal do
   @type t ::
           XSD.Boolean.t()
           | XSD.Integer.t()
+          | XSD.NonNegativeInteger.t()
+          | XSD.PositiveInteger.t()
           | XSD.Double.t()
           | XSD.String.t()
           | XSD.Decimal.t()
@@ -10,6 +12,14 @@ defmodule XSD.Literal do
           | XSD.DateTime.t()
 
   @datatypes XSD.datatypes()
+
+  @spec base_primitive(t()) :: XSD.Datatype.t()
+  def base_primitive(%datatype{}),
+    do: XSD.Datatype.base_primitive(datatype)
+
+  @spec derived_from?(t(), XSD.Datatype.t()) :: boolean
+  def derived_from?(%datatype{}, super_datatype),
+    do: XSD.Datatype.derived_from?(datatype, super_datatype)
 
   @spec coerce(any) :: t() | nil
   def coerce(value)

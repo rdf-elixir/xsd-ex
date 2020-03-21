@@ -27,14 +27,22 @@ defmodule XSD.Datatype do
     do: datatype_name |> Atom.to_string() |> iri()
 
   @doc """
-  The name of the datatype.
+  The name of the `XSD.Datatype`.
   """
   @callback name :: String.t()
 
   @doc """
-  The IRI of the datatype.
+  The IRI of the `XSD.Datatype`.
   """
   @callback id :: String.t()
+
+  @callback base :: t() | nil
+
+  @callback base_primitive :: t()
+
+  @callback derived_from?(t()) :: boolean
+
+  @callback applicable_facets :: MapSet.t(XSD.Facet.t())
 
   @doc """
   Determines if the lexical form of a `XSD.Datatype` literal is a member of its lexical value space.
@@ -116,4 +124,171 @@ defmodule XSD.Datatype do
   representation of the value.
   """
   @callback init_invalid_lexical(any, Keyword.t()) :: String.t()
+
+  defmacro __using__(opts) do
+    name = Keyword.fetch!(opts, :name)
+
+    quote do
+      @behaviour XSD.Datatype
+
+      defstruct [:value, :uncanonical_lexical]
+
+      @invalid_value nil
+
+      @type invalid_value :: nil
+      @type value :: valid_value | invalid_value
+
+      @type t :: %__MODULE__{
+              value: value,
+              uncanonical_lexical: XSD.Datatype.uncanonical_lexical()
+            }
+
+      @name unquote(name)
+      @impl unquote(__MODULE__)
+      def name, do: @name
+
+      @id XSD.Datatype.iri(@name)
+      @impl unquote(__MODULE__)
+      def id, do: @id
+
+      @impl unquote(__MODULE__)
+      def derived_from?(datatype)
+
+      def derived_from?(__MODULE__), do: true
+
+      def derived_from?(datatype) do
+        base = base()
+        not is_nil(base) and base.derived_from?(datatype)
+      end
+
+      @spec new(any, Keyword.t()) :: t()
+      def new(value, opts \\ [])
+
+      def new(lexical, opts) when is_binary(lexical) do
+        case lexical_mapping(lexical, opts) do
+          @invalid_value ->
+            build_invalid(lexical, opts)
+
+          value ->
+            if facet_conform?(value, lexical) do
+              build_valid(value, lexical, opts)
+            else
+              build_invalid(lexical, opts)
+            end
+        end
+      end
+
+      def new(value, opts) do
+        case elixir_mapping(value, opts) do
+          @invalid_value ->
+            build_invalid(value, opts)
+
+          value ->
+            {value, lexical} =
+              case value do
+                {value, lexical} -> {value, lexical}
+                value -> {value, nil}
+              end
+
+            if facet_conform?(value, lexical) do
+              build_valid(value, lexical, opts)
+            else
+              build_invalid(value, opts)
+            end
+        end
+      end
+
+      @spec new!(any, Keyword.t()) :: t()
+      def new!(value, opts \\ []) do
+        literal = new(value, opts)
+
+        if valid?(literal) do
+          literal
+        else
+          raise ArgumentError, "#{inspect(value)} is not a valid #{inspect(__MODULE__)}"
+        end
+      end
+
+      @doc false
+      @spec build_valid(any, XSD.Datatype.uncanonical_lexical(), Keyword.t()) :: t()
+      def build_valid(value, lexical, opts) do
+        if Keyword.get(opts, :canonicalize) do
+          %__MODULE__{value: value}
+        else
+          initial_lexical = init_valid_lexical(value, lexical, opts)
+
+          %__MODULE__{
+            value: value,
+            uncanonical_lexical:
+              if(initial_lexical && initial_lexical != canonical_mapping(value),
+                do: initial_lexical
+              )
+          }
+        end
+      end
+
+      defp build_invalid(lexical, opts) do
+        %__MODULE__{uncanonical_lexical: init_invalid_lexical(lexical, opts)}
+      end
+
+      @doc false
+      def facet_conform?(value, lexical) do
+        Enum.all?(applicable_facets(), fn facet ->
+          facet.conform?(__MODULE__, value, lexical)
+        end)
+      end
+
+      @impl unquote(__MODULE__)
+      @spec valid?(t() | any) :: boolean
+      def valid?(literal)
+      def valid?(%__MODULE__{value: @invalid_value}), do: false
+      def valid?(%__MODULE__{}), do: true
+      def valid?(_), do: false
+
+      defp validate_cast(%__MODULE__{} = literal), do: if(valid?(literal), do: literal)
+      defp validate_cast(_), do: nil
+
+      @impl unquote(__MODULE__)
+      def lexical(lexical)
+
+      def lexical(%__MODULE__{value: value, uncanonical_lexical: nil}),
+        do: canonical_mapping(value)
+
+      def lexical(%__MODULE__{uncanonical_lexical: lexical}), do: lexical
+
+      @impl unquote(__MODULE__)
+      @spec canonical(t()) :: t()
+      def canonical(literal)
+
+      def canonical(%__MODULE__{uncanonical_lexical: nil} = literal), do: literal
+
+      def canonical(%__MODULE__{value: @invalid_value} = literal), do: literal
+
+      def canonical(%__MODULE__{} = literal),
+        do: %__MODULE__{literal | uncanonical_lexical: nil}
+
+      def canonical_lexical(literal)
+      def canonical_lexical(%__MODULE__{value: nil}), do: nil
+
+      def canonical_lexical(%__MODULE__{value: value, uncanonical_lexical: nil}),
+        do: canonical_mapping(value)
+
+      def canonical_lexical(%__MODULE__{} = literal),
+        do: literal |> canonical() |> lexical()
+
+      def canonical_lexical(_), do: nil
+
+      @spec less_than?(t, t) :: boolean | nil
+      def less_than?(literal1, literal2), do: XSD.Literal.less_than?(literal1, literal2)
+
+      @spec greater_than?(t, t) :: boolean | nil
+      def greater_than?(literal1, literal2), do: XSD.Literal.greater_than?(literal1, literal2)
+    end
+  end
+
+  @spec base_primitive(t()) :: XSD.Datatype.t()
+  def base_primitive(datatype), do: datatype.base_primitive()
+
+  @spec derived_from?(t(), t()) :: boolean
+  def derived_from?(datatype, super_datatype), do: datatype.derived_from?(super_datatype)
 end

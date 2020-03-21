@@ -7,6 +7,17 @@ defmodule XSD.Integer do
 
   use XSD.Datatype.Primitive, name: "integer"
 
+  def_applicable_facet XSD.Facets.MinInclusive
+  def_applicable_facet XSD.Facets.MaxInclusive
+
+  def min_inclusive_conform?(min_inclusive, value, _lexical) do
+    value >= min_inclusive
+  end
+
+  def max_inclusive_conform?(max_inclusive, value, _lexical) do
+    value <= max_inclusive
+  end
+
   @impl XSD.Datatype
   def lexical_mapping(lexical, _) do
     case Integer.parse(lexical) do
@@ -53,13 +64,7 @@ defmodule XSD.Integer do
     |> new()
   end
 
-  def cast(nil), do: nil
-
-  def cast(value) do
-    unless XSD.literal?(value) do
-      value |> XSD.Literal.coerce() |> cast()
-    end
-  end
+  def cast(literal_or_value), do: super(literal_or_value)
 
   @impl XSD.Datatype
   def equal_value?(left, right), do: XSD.Numeric.equal_value?(left, right)

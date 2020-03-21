@@ -5,9 +5,11 @@ defmodule XSD do
 
   @datatypes [
     XSD.String,
-    XSD.Integer,
-    XSD.Double,
     XSD.Decimal,
+    XSD.Integer,
+    XSD.NonNegativeInteger,
+    XSD.PositiveInteger,
+    XSD.Double,
     XSD.Boolean,
     XSD.Date,
     XSD.Time,

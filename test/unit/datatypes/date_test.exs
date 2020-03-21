@@ -2,6 +2,7 @@ defmodule XSD.DateTest do
   use XSD.Datatype.Test.Case,
     datatype: XSD.Date,
     name: "date",
+    primitive: true,
     valid: %{
       # input => { value, lexical, canonicalized }
       ~D[2010-01-01] => {~D[2010-01-01], nil, "2010-01-01"},

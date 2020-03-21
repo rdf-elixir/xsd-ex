@@ -122,13 +122,7 @@ defmodule XSD.Double do
     |> new()
   end
 
-  def cast(nil), do: nil
-
-  def cast(value) do
-    unless XSD.literal?(value) do
-      value |> XSD.Literal.coerce() |> cast()
-    end
-  end
+  def cast(literal_or_value), do: super(literal_or_value)
 
   @impl XSD.Datatype
   def equal_value?(left, right), do: XSD.Numeric.equal_value?(left, right)

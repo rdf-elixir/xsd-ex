@@ -87,13 +87,7 @@ defmodule XSD.DateTime do
     |> validate_cast()
   end
 
-  def cast(nil), do: nil
-
-  def cast(value) do
-    unless XSD.literal?(value) do
-      value |> XSD.Literal.coerce() |> cast()
-    end
-  end
+  def cast(literal_or_value), do: super(literal_or_value)
 
   @doc """
   Extracts the timezone string from a `XSD.DateTime` value.

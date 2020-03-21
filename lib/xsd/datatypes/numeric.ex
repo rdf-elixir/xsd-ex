@@ -6,6 +6,8 @@ defmodule XSD.Numeric do
   @datatypes MapSet.new([
                XSD.Decimal,
                XSD.Integer,
+               XSD.NonNegativeInteger,
+               XSD.PositiveInteger,
                XSD.Double
              ])
 

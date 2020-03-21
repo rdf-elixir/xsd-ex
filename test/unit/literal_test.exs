@@ -3,6 +3,19 @@ defmodule XSD.LiteralTest do
 
   alias Decimal, as: D
 
+  test "base_primitive/1" do
+    assert XSD.integer(42) |> XSD.Literal.base_primitive() == XSD.Integer
+    assert XSD.non_negative_integer(42) |> XSD.Literal.base_primitive() == XSD.Integer
+    assert XSD.positive_integer(42) |> XSD.Literal.base_primitive() == XSD.Integer
+  end
+
+  test "derived_from?/1" do
+    assert XSD.integer(42) |> XSD.Literal.derived_from?(XSD.Integer)
+    assert XSD.non_negative_integer(42) |> XSD.Literal.derived_from?(XSD.Integer)
+    assert XSD.positive_integer(42) |> XSD.Literal.derived_from?(XSD.Integer)
+    assert XSD.positive_integer(42) |> XSD.Literal.derived_from?(XSD.NonNegativeInteger)
+  end
+
   describe "coerce/1" do
     test "with boolean" do
       assert XSD.Literal.coerce(true) == XSD.true()

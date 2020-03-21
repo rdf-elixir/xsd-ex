@@ -7,6 +7,11 @@ defmodule XSD.Datatype.Test.Case do
     datatype_iri = XSD.Datatype.iri(datatype_name)
     valid = Keyword.get(opts, :valid)
     invalid = Keyword.get(opts, :invalid)
+    primitive = Keyword.get(opts, :primitive)
+    base = unless primitive, do: Keyword.fetch!(opts, :base)
+    base_primitive = unless primitive, do: Keyword.fetch!(opts, :base_primitive)
+    applicable_facets = Keyword.get(opts, :applicable_facets, [])
+    facets = Keyword.get(opts, :facets)
 
     quote do
       alias XSD.Datatype
@@ -25,6 +30,44 @@ defmodule XSD.Datatype.Test.Case do
           assert unquote(datatype) in XSD.datatypes()
           assert XSD.datatype_by_name(unquote(datatype_name)) == unquote(datatype)
           assert XSD.datatype_by_iri(unquote(datatype_iri)) == unquote(datatype)
+        end
+
+        test "base/0" do
+          if unquote(primitive) do
+            assert unquote(datatype).base == nil
+          else
+            assert unquote(datatype).base == unquote(base)
+          end
+        end
+
+        test "base_primitive/0" do
+          if unquote(primitive) do
+            assert unquote(datatype).base_primitive == unquote(datatype)
+          else
+            assert unquote(datatype).base_primitive == unquote(base_primitive)
+          end
+        end
+
+        test "derived_from?/1" do
+          assert unquote(datatype).derived_from?(unquote(datatype)) == true
+
+          unless unquote(primitive) do
+            assert unquote(datatype).derived_from?(unquote(base)) == true
+            assert unquote(datatype).derived_from?(unquote(base_primitive)) == true
+          end
+        end
+
+        test "applicable_facets/0" do
+          assert MapSet.new(unquote(datatype).applicable_facets()) ==
+                   MapSet.new(unquote(applicable_facets))
+        end
+
+        if unquote(facets) do
+          test "facets" do
+            Enum.each(unquote(facets), fn {facet, value} ->
+              assert apply(unquote(datatype), facet, []) == value
+            end)
+          end
         end
 
         describe "general new" do

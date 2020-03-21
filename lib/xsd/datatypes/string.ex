@@ -71,13 +71,7 @@ defmodule XSD.String do
     end
   end
 
-  def cast(nil), do: nil
-
-  def cast(value) do
-    unless XSD.literal?(value) do
-      value |> XSD.Literal.coerce() |> cast()
-    end
-  end
+  def cast(literal_or_value), do: super(literal_or_value)
 
   defp default_canonical_cast(literal, datatype) do
     literal

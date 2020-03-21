@@ -2,20 +2,14 @@ defmodule XSD.IntegerTest do
   use XSD.Datatype.Test.Case,
     datatype: XSD.Integer,
     name: "integer",
-    valid: %{
-      # input => { value, lexical, canonicalized }
-      0 => {0, nil, "0"},
-      1 => {1, nil, "1"},
-      "0" => {0, nil, "0"},
-      "1" => {1, nil, "1"},
-      "01" => {1, "01", "1"},
-      "0123" => {123, "0123", "123"},
-      +1 => {1, nil, "1"},
-      -1 => {-1, nil, "-1"},
-      "+1" => {1, "+1", "1"},
-      "-1" => {-1, nil, "-1"}
+    primitive: true,
+    applicable_facets: [XSD.Facets.MinInclusive, XSD.Facets.MaxInclusive],
+    facets: %{
+      min_inclusive: nil,
+      max_inclusive: nil
     },
-    invalid: ["foo", "10.1", "12xyz", true, false, 3.14, "1 2", "foo 1", "1 foo"]
+    valid: XSD.TestData.valid_integer(),
+    invalid: XSD.TestData.invalid_integer()
 
   describe "cast/1" do
     test "casting an integer returns the input as it is" do
