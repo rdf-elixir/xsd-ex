@@ -4,32 +4,25 @@ defmodule XSD do
   """
 
   @datatypes [
-    XSD.String,
-    XSD.Decimal,
-    XSD.Integer,
-    XSD.NonNegativeInteger,
-    XSD.PositiveInteger,
-    XSD.Double,
-    XSD.Boolean,
-    XSD.Date,
-    XSD.Time,
-    XSD.DateTime
-  ]
+               XSD.Boolean,
+               XSD.String,
+               XSD.Date,
+               XSD.Time,
+               XSD.DateTime
+             ]
+             |> MapSet.new()
+             |> MapSet.union(MapSet.new(XSD.Numeric.datatypes()))
 
-  def datatypes(), do: @datatypes
+  @datatypes_by_name Map.new(@datatypes, fn datatype -> {datatype.name(), datatype} end)
+  @datatypes_by_iri Map.new(@datatypes, fn datatype -> {datatype.id(), datatype} end)
 
-  @by_name Map.new(@datatypes, fn datatype -> {datatype.name(), datatype} end)
-
-  def datatype_by_name(name), do: @by_name[name]
-
-  @by_iri Map.new(@datatypes, fn datatype -> {datatype.id(), datatype} end)
-
-  def datatype_by_iri(iri), do: @by_iri[iri]
+  def datatypes(), do: MapSet.to_list(@datatypes)
+  def datatype_by_name(name), do: @datatypes_by_name[name]
+  def datatype_by_iri(iri), do: @datatypes_by_iri[iri]
 
   @doc """
   Returns if a given datatype is a XSD datatype.
   """
-  # MapSet.member?(@datatypes, datatype)
   def datatype?(datatype), do: datatype in @datatypes
 
   @doc """
