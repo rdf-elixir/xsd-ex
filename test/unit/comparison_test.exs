@@ -37,7 +37,11 @@ defmodule XSD.ComparisonTest do
           {XSD.decimal(1.1), XSD.decimal(2.2)},
           {XSD.decimal(1.1), XSD.double(2.2)},
           {XSD.double(3.14), XSD.integer(42)},
-          {XSD.decimal(3.14), XSD.integer(42)}
+          {XSD.decimal(3.14), XSD.integer(42)},
+          {XSD.non_negative_integer(0), XSD.integer(1)},
+          {XSD.integer(0), XSD.positive_integer(1)},
+          {XSD.non_negative_integer(0), XSD.positive_integer(1)},
+          {XSD.positive_integer(1), XSD.non_negative_integer(2)}
         ],
         &assert_order/1
       )
@@ -54,7 +58,11 @@ defmodule XSD.ComparisonTest do
           {XSD.integer(42), XSD.decimal(42.0)},
           {XSD.double(3.14), XSD.decimal(3.14)},
           {XSD.double("+0"), XSD.double("-0")},
-          {XSD.decimal("+0"), XSD.decimal("-0")}
+          {XSD.decimal("+0"), XSD.decimal("-0")},
+          {XSD.non_negative_integer(0), XSD.integer(0)},
+          {XSD.integer(1), XSD.positive_integer(1)},
+          {XSD.non_negative_integer(1), XSD.positive_integer(1)},
+          {XSD.positive_integer(1), XSD.non_negative_integer(1)}
         ],
         &assert_equal/1
       )

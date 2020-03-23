@@ -187,15 +187,13 @@ defmodule XSD.EqualityTest do
     @value_equal_dates [
       {XSD.date("2002-04-02-00:00"), XSD.date("2002-04-02+00:00")},
       {XSD.date("2002-04-02Z"), XSD.date("2002-04-02+00:00")},
-      {XSD.date("2002-04-02Z"), XSD.date("2002-04-02-00:00")},
+      {XSD.date("2002-04-02Z"), XSD.date("2002-04-02-00:00")}
     ]
     @unequal_dates [
       {XSD.date("2002-04-01"), XSD.date("2002-04-02")},
       {XSD.date("2002-04-03"), XSD.date("2002-04-02Z")},
       {XSD.date("2002-04-03Z"), XSD.date("2002-04-02")},
       {XSD.date("2002-04-03+00:00"), XSD.date("2002-04-02")},
-      {XSD.date("2002-04-03-00:00"), XSD.date("2002-04-02")},
-    ]
     @equal_invalid_dates [
       {XSD.date("foo"), XSD.date("foo")}
     ]
@@ -243,11 +241,11 @@ defmodule XSD.EqualityTest do
       {XSD.time("12:00:00"), XSD.time("12:00:00")}
     ]
     @value_equal_times [
-      {XSD.time("00:00:00+00:00"), XSD.time("00:00:00Z")},
+      {XSD.time("00:00:00+00:00"), XSD.time("00:00:00Z")}
     ]
     @unequal_times [
       {XSD.time("12:00:00"), XSD.time("13:00:00")},
-      {XSD.time("00:00:00.0000Z"), XSD.time("00:00:00Z")},
+      {XSD.time("00:00:00.0000Z"), XSD.time("00:00:00Z")}
     ]
     @equal_invalid_times [
       {XSD.time("foo"), XSD.time("foo")}
@@ -258,7 +256,7 @@ defmodule XSD.EqualityTest do
     @incomparable_times [
       {XSD.time("12:00:00"), XSD.string("12:00:00")},
       {XSD.time("00:00:00"), XSD.time("00:00:00Z")},
-      {XSD.time("00:00:00.0000"), XSD.time("00:00:00Z")},
+      {XSD.time("00:00:00.0000"), XSD.time("00:00:00Z")}
     ]
 
     test "term equality", do: assert_term_equal(@term_equal_times)
