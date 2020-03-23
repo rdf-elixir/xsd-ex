@@ -16,7 +16,12 @@ defmodule XSD do
   @datatypes_by_name Map.new(@datatypes, fn datatype -> {datatype.name(), datatype} end)
   @datatypes_by_iri Map.new(@datatypes, fn datatype -> {datatype.id(), datatype} end)
 
-  def datatypes(), do: MapSet.to_list(@datatypes)
+  @doc """
+  The list of all XSD datatypes.
+  """
+  @spec datatypes() :: [XSD.Datatype.t()]
+  def datatypes(), do: Enum.to_list(@datatypes)
+
   def datatype_by_name(name), do: @datatypes_by_name[name]
   def datatype_by_iri(iri), do: @datatypes_by_iri[iri]
 

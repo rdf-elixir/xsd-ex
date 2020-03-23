@@ -17,16 +17,12 @@ defmodule XSD.Numeric do
   The list of all numeric datatypes.
   """
   @spec datatypes() :: [XSD.Datatype.t()]
-  # https://elixirforum.com/t/dialyzer-complaint-about-mapset-member-not-getting-proper-type-as-argument-possible-specs-bug-in-mapset/20780
-  @dialyzer {:nowarn_function, datatypes: 0}
-  def datatypes(), do: MapSet.to_list(@datatypes)
+  def datatypes(), do: Enum.to_list(@datatypes)
 
   @doc """
   Returns if a given datatype is a numeric datatype.
   """
   @spec datatype?(XSD.Datatype.t() | any) :: boolean
-  # https://elixirforum.com/t/dialyzer-complaint-about-mapset-member-not-getting-proper-type-as-argument-possible-specs-bug-in-mapset/20780
-  @dialyzer {:nowarn_function, datatype?: 1}
   def datatype?(datatype), do: datatype in @datatypes
 
   @doc """
@@ -111,8 +107,6 @@ defmodule XSD.Numeric do
 
   def compare(_, _), do: nil
 
-  # probably caused by the ignored opaque MapSet.t type issue above
-  @dialyzer {:nowarn_function, compare_decimal_value: 2}
   defp compare_decimal_value(%D{} = left, %D{} = right), do: D.cmp(left, right)
 
   defp compare_decimal_value(%D{} = left, right),

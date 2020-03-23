@@ -48,7 +48,6 @@ defmodule XSD.Boolean do
 
   def cast(nil), do: nil
 
-  @dialyzer {:nowarn_function, cast: 1}
   def cast(literal_or_value) do
     if XSD.Numeric.literal?(literal_or_value) do
       new(literal_or_value.value not in [0, 0.0, :nan])
