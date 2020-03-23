@@ -13,6 +13,11 @@ defmodule XSD.Datatype.Test.Case do
     applicable_facets = Keyword.get(opts, :applicable_facets, [])
     facets = Keyword.get(opts, :facets)
 
+    comparable_datatypes =
+      (base_hierarchy_path(Macro.expand_once(datatype, __CALLER__)) ++
+         Keyword.get(opts, :comparable_datatypes, []))
+      |> Enum.map(fn datatype -> Macro.expand_once(datatype, __CALLER__) end)
+
     quote do
       alias XSD.Datatype
       alias unquote(datatype)
@@ -198,11 +203,33 @@ defmodule XSD.Datatype.Test.Case do
           end)
         end
       end
+
+      test "XSD.Datatype.comparable?/2" do
+        Enum.each(XSD.datatypes(), fn other_datatype ->
+          if other_datatype in unquote(comparable_datatypes) or
+               Enum.any?(unquote(comparable_datatypes), fn comparable_datatype ->
+                 XSD.Datatype.derived_from?(other_datatype, comparable_datatype)
+               end) do
+            assert XSD.Datatype.comparable?(unquote(datatype), other_datatype) == true,
+                   "expected #{unquote(datatype)} to be comparable to #{other_datatype}"
+          else
+            assert XSD.Datatype.comparable?(unquote(datatype), other_datatype) == false,
+                   "expected #{unquote(datatype)} not to be comparable to #{other_datatype}"
+          end
+        end)
+      end
     end
   end
 
   def dt(value) do
     {:ok, date, _} = DateTime.from_iso8601(value)
     date
+  end
+
+  defp base_hierarchy_path(datatype, super_datatypes \\ [])
+  defp base_hierarchy_path(nil, super_datatypes), do: super_datatypes
+
+  defp base_hierarchy_path(datatype, super_datatypes) do
+    [datatype | base_hierarchy_path(datatype.base, super_datatypes)]
   end
 end

@@ -32,20 +32,19 @@ defmodule XSD.EqualityTest do
       {XSD.true(), XSD.false()},
       {XSD.false(), XSD.true()},
       {XSD.true(), XSD.boolean("false")},
-      {XSD.true(), XSD.boolean("True")},
-      {XSD.true(), XSD.boolean(0)},
-      {XSD.false(), XSD.boolean("FALSE")}
+      {XSD.true(), XSD.boolean(0)}
     ]
     @equal_invalid_booleans [
       {XSD.boolean("foo"), XSD.boolean("foo")}
     ]
     @unequal_invalid_booleans [
-      {XSD.boolean("foo"), XSD.boolean("bar")}
+      {XSD.boolean("foo"), XSD.boolean("bar")},
+      {XSD.true(), XSD.boolean("True")},
+      {XSD.false(), XSD.boolean("FALSE")}
     ]
     @incomparable_booleans [
       {XSD.false(), nil},
       {XSD.true(), 42},
-      {XSD.true(), XSD.string("FALSE")},
       {XSD.true(), XSD.integer(0)},
       {XSD.true(), XSD.non_negative_integer(0)}
     ]
@@ -225,14 +224,14 @@ defmodule XSD.EqualityTest do
   end
 
   describe "equality between XSD.Date and XSD.DateTime" do
-    @equal_dates_and_datetimes [
+    @incomparable_dates_and_datetimes [
       {XSD.date("2002-04-02"), XSD.datetime("2002-04-02T00:00:00")},
       {XSD.datetime("2002-04-02T00:00:00"), XSD.date("2002-04-02")},
       {XSD.date("2002-04-01"), XSD.datetime("2002-04-02T00:00:00")},
       {XSD.datetime("2002-04-01T00:00:00"), XSD.date("2002-04-02")}
     ]
 
-    test "inequality", do: assert_unequal(@equal_dates_and_datetimes)
+    test "incomparability", do: assert_incomparable(@incomparable_dates_and_datetimes)
   end
 
   describe "XSD.Time" do
@@ -268,30 +267,35 @@ defmodule XSD.EqualityTest do
   end
 
   defp assert_term_equal(examples) do
+    Enum.each(examples, fn example -> assert_comparable(example, true) end)
     Enum.each(examples, fn example -> assert_equality(example, true) end)
     Enum.each(examples, fn example -> assert_term_equality(example, true) end)
     Enum.each(examples, fn example -> assert_value_equality(example, true) end)
   end
 
   defp assert_value_equal(examples) do
+    Enum.each(examples, fn example -> assert_comparable(example, true) end)
     Enum.each(examples, fn example -> assert_equality(example, false) end)
     Enum.each(examples, fn example -> assert_term_equality(example, false) end)
     Enum.each(examples, fn example -> assert_value_equality(example, true) end)
   end
 
   defp assert_unequal(examples) do
+    Enum.each(examples, fn example -> assert_comparable(example, true) end)
     Enum.each(examples, fn example -> assert_equality(example, false) end)
     Enum.each(examples, fn example -> assert_term_equality(example, false) end)
     Enum.each(examples, fn example -> assert_value_equality(example, false) end)
   end
 
   def assert_equal_invalid(examples) do
+    Enum.each(examples, fn example -> assert_comparable(example, false) end)
     Enum.each(examples, fn example -> assert_equality(example, true) end)
     Enum.each(examples, fn example -> assert_term_equality(example, true) end)
     Enum.each(examples, fn example -> assert_value_equality(example, true) end)
   end
 
   def assert_unequal_invalid(examples) do
+    Enum.each(examples, fn example -> assert_comparable(example, false) end)
     Enum.each(examples, fn example -> assert_equality(example, false) end)
     Enum.each(examples, fn example -> assert_term_equality(example, false) end)
     Enum.each(examples, fn example -> assert_value_equality(example, false) end)
@@ -301,6 +305,18 @@ defmodule XSD.EqualityTest do
     Enum.each(examples, fn example -> assert_equality(example, false) end)
     Enum.each(examples, fn example -> assert_term_equality(example, false) end)
     Enum.each(examples, fn example -> assert_value_equality(example, false) end)
+  end
+
+  defp assert_comparable({left, right}, expected) do
+    result = XSD.Literal.comparable?(left, right)
+
+    assert result == expected, """
+    expected XSD.Literal.comparable?(
+      #{inspect(left)},
+      #{inspect(right)})
+    to be:   #{inspect(expected)}
+    but got: #{inspect(result)}
+    """
   end
 
   defp assert_equality({left, right}, expected) do

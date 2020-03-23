@@ -5,6 +5,7 @@ defmodule XSD.DecimalTest do
     datatype: XSD.Decimal,
     name: "decimal",
     primitive: true,
+    comparable_datatypes: [XSD.Integer, XSD.Double],
     valid: %{
       # input => {value, lexical, canonicalized}
       0 => {Elixir.Decimal.from_float(0.0), nil, "0.0"},

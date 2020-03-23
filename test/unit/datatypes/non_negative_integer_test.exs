@@ -4,6 +4,7 @@ defmodule XSD.NonNegativeIntegerTest do
     name: "non_negative_integer",
     base: XSD.Integer,
     base_primitive: XSD.Integer,
+    comparable_datatypes: [XSD.Decimal, XSD.Double],
     applicable_facets: [XSD.Facets.MinInclusive, XSD.Facets.MaxInclusive],
     facets: %{
       min_inclusive: 0,

@@ -167,7 +167,6 @@ defmodule XSD.ComparisonTest do
           {XSD.string("2002-04-02T12:00:00"), XSD.datetime("2002-04-02T12:00:00")},
           {XSD.string("2002-04-02"), XSD.date("2002-04-02")},
           {XSD.string("12:00:00"), XSD.time("12:00:00")},
-          {XSD.false(), nil},
           {XSD.true(), XSD.integer(42)},
           {XSD.true(), XSD.decimal(3.14)},
           {XSD.datetime("2002-04-02T12:00:00"), XSD.true()},
@@ -198,6 +197,9 @@ defmodule XSD.ComparisonTest do
   end
 
   defp assert_order({left, right}) do
+    assert_comparable_result({left, right}, true)
+    assert_comparable_result({right, left}, true)
+
     assert_compare_result({left, right}, :lt)
     assert_compare_result({right, left}, :gt)
 
@@ -209,6 +211,9 @@ defmodule XSD.ComparisonTest do
   end
 
   defp assert_equal({left, right}) do
+    assert_comparable_result({left, right}, true)
+    assert_comparable_result({right, left}, true)
+
     assert_compare_result({left, right}, :eq)
     assert_compare_result({right, left}, :eq)
 
@@ -220,6 +225,9 @@ defmodule XSD.ComparisonTest do
   end
 
   defp assert_incomparable({left, right}) do
+    assert_comparable_result({left, right}, false)
+    assert_comparable_result({right, left}, false)
+
     assert_compare_result({left, right}, nil)
     assert_compare_result({right, left}, nil)
 
@@ -231,6 +239,9 @@ defmodule XSD.ComparisonTest do
   end
 
   defp assert_indeterminate({left, right}) do
+    assert_comparable_result({left, right}, true)
+    assert_comparable_result({right, left}, true)
+
     assert_compare_result({left, right}, :indeterminate)
     assert_compare_result({right, left}, :indeterminate)
 
@@ -239,6 +250,18 @@ defmodule XSD.ComparisonTest do
 
     assert_less_than({left, right}, false)
     assert_less_than({right, left}, false)
+  end
+
+  defp assert_comparable_result({left, right}, expected) do
+    result = XSD.Literal.comparable?(left, right)
+
+    assert result == expected, """
+    expected XSD.Literal.comparable?(
+      #{inspect(left)},
+      #{inspect(right)})
+    to be:   #{inspect(expected)}
+    but got: #{inspect(result)}
+    """
   end
 
   defp assert_compare_result({left, right}, expected) do

@@ -3,6 +3,7 @@ defmodule XSD.IntegerTest do
     datatype: XSD.Integer,
     name: "integer",
     primitive: true,
+    comparable_datatypes: [XSD.Decimal, XSD.Double],
     applicable_facets: [XSD.Facets.MinInclusive, XSD.Facets.MaxInclusive],
     facets: %{
       min_inclusive: nil,

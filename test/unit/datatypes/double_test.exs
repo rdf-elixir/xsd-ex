@@ -3,6 +3,7 @@ defmodule XSD.DoubleTest do
     datatype: XSD.Double,
     name: "double",
     primitive: true,
+    comparable_datatypes: [XSD.Integer, XSD.Decimal],
     valid: %{
       # input => { value, lexical, canonicalized }
       0 => {0.0, "0.0", "0.0E0"},

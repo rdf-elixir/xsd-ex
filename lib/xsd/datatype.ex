@@ -26,6 +26,24 @@ defmodule XSD.Datatype do
   def iri(datatype_name) when is_atom(datatype_name),
     do: datatype_name |> Atom.to_string() |> iri()
 
+  @spec base_primitive(t()) :: XSD.Datatype.t()
+  def base_primitive(datatype), do: datatype.base_primitive()
+
+  @spec derived_from?(t(), t()) :: boolean
+  def derived_from?(datatype, super_datatype), do: datatype.derived_from?(super_datatype)
+
+  @doc """
+  Checks if two `XSD.Datatype`s are comparable.
+  """
+  @spec comparable?(t(), t()) :: boolean
+  def comparable?(datatype1, datatype2)
+  def comparable?(datatype, datatype), do: true
+
+  def comparable?(datatype1, datatype2) do
+    derived_from?(datatype1, datatype2) or derived_from?(datatype2, datatype1) or
+      (XSD.Numeric.datatype?(datatype1) and XSD.Numeric.datatype?(datatype2))
+  end
+
   @doc """
   The name of the `XSD.Datatype`.
   """
@@ -285,10 +303,4 @@ defmodule XSD.Datatype do
       def greater_than?(literal1, literal2), do: XSD.Literal.greater_than?(literal1, literal2)
     end
   end
-
-  @spec base_primitive(t()) :: XSD.Datatype.t()
-  def base_primitive(datatype), do: datatype.base_primitive()
-
-  @spec derived_from?(t(), t()) :: boolean
-  def derived_from?(datatype, super_datatype), do: datatype.derived_from?(super_datatype)
 end

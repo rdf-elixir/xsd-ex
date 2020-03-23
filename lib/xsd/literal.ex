@@ -80,4 +80,20 @@ defmodule XSD.Literal do
       _ -> false
     end
   end
+
+  @doc """
+  Checks if two `XSD.Literal`s are comparable with respect to their types or because one of them is invalid.
+  """
+  @spec comparable?(t(), t() | XSD.Datatype.t()) :: boolean
+  def comparable?(left, right)
+
+  def comparable?(%_datatype{value: nil}, _), do: false
+  def comparable?(_, %_datatype{value: nil}), do: false
+
+  def comparable?(%datatype1{}, %datatype2{}), do: XSD.Datatype.comparable?(datatype1, datatype2)
+
+  def comparable?(%datatype1{}, datatype2) when is_atom(datatype2),
+    do: XSD.Datatype.comparable?(datatype1, datatype2)
+
+  def comparable?(_, _), do: false
 end
