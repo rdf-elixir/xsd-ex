@@ -55,30 +55,18 @@ defmodule XSD.Literal do
 
   @doc """
   Checks if the first of two `XSD.Datatype` literals is smaller then the other.
-
-  Returns `nil` when the given arguments are not comparable datatypes.
   """
-  @spec less_than?(t, t) :: boolean | nil
+  @spec less_than?(t, t) :: boolean
   def less_than?(left, right) do
-    case compare(left, right) do
-      :lt -> true
-      nil -> nil
-      _ -> false
-    end
+    compare(left, right) == :lt
   end
 
   @doc """
   Checks if the first of two `XSD.Datatype` literals is greater then the other.
-
-  Returns `nil` when the given arguments are not comparable datatypes.
   """
-  @spec greater_than?(t, t) :: boolean | nil
+  @spec greater_than?(t, t) :: boolean
   def greater_than?(left, right) do
-    case compare(left, right) do
-      :gt -> true
-      nil -> nil
-      _ -> false
-    end
+    compare(left, right) == :gt
   end
 
   @doc """

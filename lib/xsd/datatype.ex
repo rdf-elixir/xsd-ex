@@ -296,10 +296,10 @@ defmodule XSD.Datatype do
 
       def canonical_lexical(_), do: nil
 
-      @spec less_than?(t, t) :: boolean | nil
+      @spec less_than?(t, t) :: boolean
       def less_than?(literal1, literal2), do: XSD.Literal.less_than?(literal1, literal2)
 
-      @spec greater_than?(t, t) :: boolean | nil
+      @spec greater_than?(t, t) :: boolean
       def greater_than?(literal1, literal2), do: XSD.Literal.greater_than?(literal1, literal2)
     end
   end

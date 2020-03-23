@@ -231,11 +231,11 @@ defmodule XSD.ComparisonTest do
     assert_compare_result({left, right}, nil)
     assert_compare_result({right, left}, nil)
 
-    assert_greater_than({left, right}, nil)
-    assert_greater_than({right, left}, nil)
+    assert_greater_than({left, right}, false)
+    assert_greater_than({right, left}, false)
 
-    assert_less_than({left, right}, nil)
-    assert_less_than({right, left}, nil)
+    assert_less_than({left, right}, false)
+    assert_less_than({right, left}, false)
   end
 
   defp assert_indeterminate({left, right}) do
