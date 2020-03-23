@@ -79,28 +79,6 @@ defmodule XSD.IntegerTest do
     end
   end
 
-  describe "Elixir equality" do
-    test "two literals are equal when they have the same datatype and lexical form" do
-      [
-        {"1", 1},
-        {"-42", -42}
-      ]
-      |> Enum.each(fn {l, r} ->
-        assert Integer.new(l) == Integer.new(r)
-      end)
-    end
-
-    test "two literals with same value but different lexical form are not equal" do
-      [
-        {"01", 1},
-        {"+42", 42}
-      ]
-      |> Enum.each(fn {l, r} ->
-        assert Integer.new(l) != Integer.new(r)
-      end)
-    end
-  end
-
   #  test "digit_count/1" do
   #    assert XSD.Integer.digit_count(XSD.integer("2")) == 1
   #    assert XSD.Integer.digit_count(XSD.integer("23")) == 2

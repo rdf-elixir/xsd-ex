@@ -186,27 +186,4 @@ defmodule XSD.DateTimeTest do
     assert XSD.dateTime("2010-01-01 01:00:00+01:00") |> DateTime.canonical_lexical_with_zone() ==
              "2010-01-01T01:00:00+01:00"
   end
-
-  describe "Elixir equality" do
-    test "two literals are equal when they have the same datatype and lexical form" do
-      [
-        {"2010-01-01T00:00:00Z", dt("2010-01-01T00:00:00Z")},
-        {"2010-01-01T00:00:00", ~N[2010-01-01T00:00:00]}
-      ]
-      |> Enum.each(fn {l, r} ->
-        assert DateTime.new(l) == DateTime.new(r)
-      end)
-    end
-
-    test "two literals with same value but different lexical form are not equal" do
-      [
-        {"2010-01-01T00:00:00Z", "2010-01-01T00:00:00"},
-        {"2010-01-01T00:00:00+00:00", "2010-01-01T00:00:00Z"},
-        {"2010-01-01T00:00:00.0000Z", "2010-01-01T00:00:00Z"}
-      ]
-      |> Enum.each(fn {l, r} ->
-        assert DateTime.new(l) != DateTime.new(r)
-      end)
-    end
-  end
 end

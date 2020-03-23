@@ -100,25 +100,4 @@ defmodule XSD.NonNegativeIntegerTest do
       assert XSD.NonNegativeInteger.cast(make_ref()) == nil
     end
   end
-
-  describe "Elixir equality" do
-    test "two literals are equal when they have the same datatype and lexical form" do
-      [
-        {"1", 1}
-      ]
-      |> Enum.each(fn {l, r} ->
-        assert NonNegativeInteger.new(l) == NonNegativeInteger.new(r)
-      end)
-    end
-
-    test "two literals with same value but different lexical form are not equal" do
-      [
-        {"01", 1},
-        {"+42", 42}
-      ]
-      |> Enum.each(fn {l, r} ->
-        assert NonNegativeInteger.new(l) != NonNegativeInteger.new(r)
-      end)
-    end
-  end
 end

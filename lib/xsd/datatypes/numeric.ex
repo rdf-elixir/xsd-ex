@@ -27,7 +27,7 @@ defmodule XSD.Numeric do
   @spec datatype?(XSD.Datatype.t() | any) :: boolean
   # https://elixirforum.com/t/dialyzer-complaint-about-mapset-member-not-getting-proper-type-as-argument-possible-specs-bug-in-mapset/20780
   @dialyzer {:nowarn_function, datatype?: 1}
-  def datatype?(datatype), do: MapSet.member?(@datatypes, datatype)
+  def datatype?(datatype), do: datatype in @datatypes
 
   @doc """
   Returns if a given XSD literal has a numeric datatype.
@@ -49,7 +49,7 @@ defmodule XSD.Numeric do
 
   def equal_value?(%left_datatype{value: left}, %right_datatype{value: right})
       when left_datatype == XSD.Decimal or right_datatype == XSD.Decimal,
-      do: equal_decimal_value?(left, right)
+      do: not is_nil(left) and not is_nil(right) and equal_decimal_value?(left, right)
 
   def equal_value?(%left_datatype{value: left}, %right_datatype{value: right}) do
     XSD.datatype?(left_datatype) and

@@ -65,38 +65,10 @@ defmodule XSD.Datatype.Restriction do
       end
 
       @impl XSD.Datatype
-      def equal_value?(literal1, literal2)
-
-      def equal_value?(
-            %datatype{uncanonical_lexical: lexical1, value: nil},
-            %datatype{uncanonical_lexical: lexical2, value: nil}
-          ) do
-        lexical1 == lexical2
-      end
-
-      def equal_value?(%datatype{} = literal1, %datatype{} = literal2) do
-        canonical(literal1).value == canonical(literal2).value
-      end
-
-      def equal_value?(_, _), do: false
+      def equal_value?(literal1, literal2), do: @base.equal_value?(literal1, literal2)
 
       @impl XSD.Datatype
-      @spec compare(t, t) :: XSD.Datatype.comparison_result() | :indeterminate | nil
-      def compare(left, right)
-
-      def compare(
-            %__MODULE__{value: left_value} = left,
-            %__MODULE__{value: right_value} = right
-          )
-          when not (is_nil(left_value) or is_nil(right_value)) do
-        case {canonical(left).value, canonical(right).value} do
-          {value1, value2} when value1 < value2 -> :lt
-          {value1, value2} when value1 > value2 -> :gt
-          _ -> if equal_value?(left, right), do: :eq
-        end
-      end
-
-      def compare(_, _), do: nil
+      def compare(left, right), do: @base.compare(left, right)
 
       defoverridable canonical_mapping: 1,
                      equal_value?: 2,

@@ -97,32 +97,6 @@ defmodule XSD.BooleanTest do
     end
   end
 
-  describe "Elixir equality" do
-    test "two literals are equal when they have the same datatype and lexical form" do
-      [
-        {true, "true"},
-        {false, "false"},
-        {1, "true"},
-        {0, "false"}
-      ]
-      |> Enum.each(fn {l, r} ->
-        assert Boolean.new(l) == Boolean.new(r)
-      end)
-    end
-
-    test "two literals with same value but different lexical form are not equal" do
-      [
-        {"True", "true"},
-        {"FALSE", "false"},
-        {"1", "true"},
-        {"0", "false"}
-      ]
-      |> Enum.each(fn {l, r} ->
-        assert Boolean.new(l) != Boolean.new(r)
-      end)
-    end
-  end
-
   describe "ebv/1" do
     import XSD.Boolean, only: [ebv: 1]
 

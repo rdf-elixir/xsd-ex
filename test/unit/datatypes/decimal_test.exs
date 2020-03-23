@@ -40,6 +40,7 @@ defmodule XSD.DecimalTest do
     invalid: [
       "foo",
       "10.1e1",
+      "1.0E0",
       "12.xyz",
       "3,5",
       "NaN",
@@ -113,32 +114,6 @@ defmodule XSD.DecimalTest do
     test "with non-coercible value" do
       assert XSD.Decimal.cast(:foo) == nil
       assert XSD.Decimal.cast(make_ref()) == nil
-    end
-  end
-
-  describe "Elixir equality" do
-    test "two literals are equal when they have the same datatype and lexical form" do
-      [
-        {"1.0", 1.0},
-        {"-42.0", -42.0},
-        {"1.0", 1.0}
-      ]
-      |> Enum.each(fn {l, r} ->
-        assert Decimal.new(l) == Decimal.new(r)
-      end)
-    end
-
-    test "two literals with same value but different lexical form are not equal" do
-      [
-        {"1", 1.0},
-        {"01", 1.0},
-        {"1.0E0", 1.0},
-        {"1.0E0", "1.0"},
-        {"+42", 42.0}
-      ]
-      |> Enum.each(fn {l, r} ->
-        assert Decimal.new(l) != Decimal.new(r)
-      end)
     end
   end
 

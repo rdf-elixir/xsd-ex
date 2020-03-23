@@ -61,7 +61,7 @@ defmodule XSD.Facet do
     facet_name = String.to_atom(facet_mod.name)
 
     quote do
-      unless unquote(facet_name) in @applicable_facet_names,
+      unless unquote(facet) in @base.applicable_facets,
         do: raise("#{unquote(facet_name)} is not an applicable facet of #{@base}")
 
       @facets unquote(facet_name)
