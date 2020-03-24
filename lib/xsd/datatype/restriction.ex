@@ -1,6 +1,7 @@
 defmodule XSD.Datatype.Restriction do
   defmacro __using__(opts) do
     base = Keyword.fetch!(opts, :base)
+    target_namespace = Keyword.get(opts, :target_namespace)
 
     quote do
       use XSD.Datatype, unquote(opts)
@@ -13,6 +14,13 @@ defmodule XSD.Datatype.Restriction do
       @impl XSD.Datatype
       @spec base :: XSD.Datatype.t()
       def base, do: @base
+
+      @impl XSD.Datatype
+      if unquote(target_namespace) do
+        def target_namespace, do: unquote(target_namespace)
+      else
+        def target_namespace, do: @base.target_namespace()
+      end
 
       @impl XSD.Datatype
       def base_primitive, do: @base.base_primitive()

@@ -4,7 +4,10 @@ defmodule XSD.Datatype.Test.Case do
   using(opts) do
     datatype = Keyword.fetch!(opts, :datatype)
     datatype_name = Keyword.fetch!(opts, :name)
-    datatype_iri = XSD.Datatype.iri(datatype_name)
+
+    datatype_iri =
+      Keyword.get(opts, :iri, XSD.Datatype.Primitive.default_namespace() <> datatype_name)
+
     valid = Keyword.get(opts, :valid)
     invalid = Keyword.get(opts, :invalid)
     primitive = Keyword.get(opts, :primitive)

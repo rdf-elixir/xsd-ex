@@ -9,23 +9,6 @@ defmodule XSD.Datatype do
 
   @type comparison_result :: :lt | :gt | :eq
 
-  @ns "http://www.w3.org/2001/XMLSchema#"
-
-  @doc """
-  Returns to official XSD namespace IRI.
-
-  `"#{@ns}"`
-  """
-  @spec ns() :: String.t()
-  def ns(), do: @ns
-
-  @spec iri(String.t() | atom) :: String.t()
-  def iri(datatype_name)
-  def iri(datatype_name) when is_binary(datatype_name), do: @ns <> datatype_name
-
-  def iri(datatype_name) when is_atom(datatype_name),
-    do: datatype_name |> Atom.to_string() |> iri()
-
   @spec base_primitive(t()) :: XSD.Datatype.t()
   def base_primitive(datatype), do: datatype.base_primitive()
 
@@ -46,12 +29,22 @@ defmodule XSD.Datatype do
   end
 
   @doc """
+  The IRI namespace of the `XSD.Datatype`.
+
+  By default the XSD namespace `"http://www.w3.org/2001/XMLSchema#"` for primitive
+  datatypes or in case of derived datatypes the `target_namespace/0` of the `base/0` datatype.
+  """
+  @callback target_namespace :: String.t()
+
+  @doc """
   The name of the `XSD.Datatype`.
   """
   @callback name :: String.t()
 
   @doc """
   The IRI of the `XSD.Datatype`.
+
+  It is the concatenation of the `c:target_namespace/0` and the `c:name/0`.
   """
   @callback id :: String.t()
 
@@ -112,7 +105,6 @@ defmodule XSD.Datatype do
   """
   @callback compare(XSD.Literal.t(), XSD.Literal.t()) :: comparison_result | :indeterminate | nil
 
-
   @doc """
   A mapping from the lexical space of a `XSD.Datatype` into its value space.
   """
@@ -166,9 +158,8 @@ defmodule XSD.Datatype do
       @impl unquote(__MODULE__)
       def name, do: @name
 
-      @id XSD.Datatype.iri(@name)
       @impl unquote(__MODULE__)
-      def id, do: @id
+      def id, do: target_namespace() <> name()
 
       @impl unquote(__MODULE__)
       def derived_from?(datatype)

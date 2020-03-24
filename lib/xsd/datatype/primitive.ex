@@ -1,4 +1,7 @@
 defmodule XSD.Datatype.Primitive do
+  @default_namespace "http://www.w3.org/2001/XMLSchema#"
+  def default_namespace(), do: @default_namespace
+
   defmacro def_applicable_facet(facet) do
     quote do
       @applicable_facets unquote(facet)
@@ -13,6 +16,9 @@ defmodule XSD.Datatype.Primitive do
       import unquote(__MODULE__)
 
       Module.register_attribute(__MODULE__, :applicable_facets, accumulate: true)
+
+      @impl XSD.Datatype
+      def target_namespace, do: unquote(@default_namespace)
 
       @impl XSD.Datatype
       def base, do: nil
