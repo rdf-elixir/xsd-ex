@@ -9,6 +9,12 @@ defmodule XSD.EqualityTest do
     @unequal_strings [
       {XSD.string("foo"), XSD.string("bar")}
     ]
+    @equal_strings_by_coercion [
+      {XSD.string("foo"), "foo"}
+    ]
+    @unequal_strings_by_coercion [
+      {XSD.string("foo"), "bar"}
+    ]
     @incomparable_strings [
       {XSD.string("42"), 42}
     ]
@@ -16,6 +22,8 @@ defmodule XSD.EqualityTest do
     test "term equality", do: assert_term_equal(@term_equal_strings)
     test "value equality", do: assert_value_equal(@value_equal_strings)
     test "inequality", do: assert_unequal(@unequal_strings)
+    test "coerced value equality", do: assert_coerced_equal(@equal_strings_by_coercion)
+    test "coerced value inequality", do: assert_coerced_unequal(@unequal_strings_by_coercion)
     test "incomparability", do: assert_incomparable(@incomparable_strings)
   end
 
@@ -26,13 +34,21 @@ defmodule XSD.EqualityTest do
     ]
     @value_equal_booleans [
       {XSD.true(), XSD.boolean("1")},
-      {XSD.boolean("0"), XSD.false()}
+      {XSD.false(), XSD.boolean("0")}
     ]
     @unequal_booleans [
       {XSD.true(), XSD.false()},
       {XSD.false(), XSD.true()},
       {XSD.true(), XSD.boolean("false")},
       {XSD.true(), XSD.boolean(0)}
+    ]
+    @equal_booleans_by_coercion [
+      {XSD.true(), true},
+      {XSD.false(), false}
+    ]
+    @unequal_booleans_by_coercion [
+      {XSD.true(), false},
+      {XSD.false(), true}
     ]
     @equal_invalid_booleans [
       {XSD.boolean("foo"), XSD.boolean("foo")}
@@ -52,6 +68,8 @@ defmodule XSD.EqualityTest do
     test "term equality", do: assert_term_equal(@term_equal_booleans)
     test "value equality", do: assert_value_equal(@value_equal_booleans)
     test "inequality", do: assert_unequal(@unequal_booleans)
+    test "coerced value equality", do: assert_coerced_equal(@equal_booleans_by_coercion)
+    test "coerced value inequality", do: assert_coerced_unequal(@unequal_booleans_by_coercion)
     test "invalid equality", do: assert_equal_invalid(@equal_invalid_booleans)
     test "invalid inequality", do: assert_unequal_invalid(@unequal_invalid_booleans)
     test "incomparability", do: assert_incomparable(@incomparable_booleans)
@@ -101,6 +119,23 @@ defmodule XSD.EqualityTest do
       {XSD.integer("1"), XSD.double("1.1")},
       {XSD.integer("1"), XSD.decimal("1.1")}
     ]
+    @equal_numerics_by_coercion [
+      {XSD.integer(42), 42},
+      {XSD.integer(42), 42.0},
+      {XSD.integer(42), Elixir.Decimal.new(42)},
+      {XSD.decimal(42), 42},
+      {XSD.decimal(3.14), 3.14},
+      {XSD.decimal(3.14), Elixir.Decimal.from_float(3.14)},
+      {XSD.double(42), 42},
+      {XSD.double(3.14), 3.14},
+      {XSD.double(3.14), Elixir.Decimal.from_float(3.14)}
+    ]
+    @unequal_numerics_by_coercion [
+      {XSD.integer(3), 3.14},
+      {XSD.integer(3), Elixir.Decimal.from_float(3.14)},
+      {XSD.double(3.14), 3},
+      {XSD.decimal(3.14), 3}
+    ]
     @equal_invalid_numerics [
       {XSD.integer("foo"), XSD.integer("foo")},
       {XSD.decimal("foo"), XSD.decimal("foo")},
@@ -127,6 +162,8 @@ defmodule XSD.EqualityTest do
     test "term equality", do: assert_term_equal(@term_equal_numerics)
     test "value equality", do: assert_value_equal(@value_equal_numerics)
     test "inequality", do: assert_unequal(@unequal_numerics)
+    test "coerced value equality", do: assert_coerced_equal(@equal_numerics_by_coercion)
+    test "coerced value inequality", do: assert_coerced_unequal(@unequal_numerics_by_coercion)
     test "invalid equality", do: assert_equal_invalid(@equal_invalid_numerics)
     test "invalid inequality", do: assert_unequal_invalid(@unequal_invalid_numerics)
     test "incomparability", do: assert_incomparable(@incomparable_numerics)
@@ -156,6 +193,23 @@ defmodule XSD.EqualityTest do
       {XSD.datetime("2002-04-02T12:00:00"), XSD.datetime("2002-04-02T17:00:00")},
       {XSD.datetime("2005-04-04T24:00:00"), XSD.datetime("2005-04-04T00:00:00")}
     ]
+    @equal_datetimes_by_coercion [
+      {XSD.datetime("2002-04-02T12:00:00-01:00"),
+       elem(DateTime.from_iso8601("2002-04-02T12:00:00-01:00"), 1)},
+      {XSD.datetime("2002-04-02T12:00:00"), ~N"2002-04-02T12:00:00"},
+      {XSD.datetime("2002-04-02T23:00:00Z"),
+       elem(DateTime.from_iso8601("2002-04-02T23:00:00+00:00"), 1)},
+      {XSD.datetime("2002-04-02T23:00:00+00:00"),
+       elem(DateTime.from_iso8601("2002-04-02T23:00:00Z"), 1)},
+      {XSD.datetime("2002-04-02T23:00:00-00:00"),
+       elem(DateTime.from_iso8601("2002-04-02T23:00:00Z"), 1)},
+      {XSD.datetime("2002-04-02T23:00:00-00:00"),
+       elem(DateTime.from_iso8601("2002-04-02T23:00:00+00:00"), 1)}
+    ]
+    @unequal_datetimes_by_coercion [
+      {XSD.datetime("2002-04-02T12:00:00-01:00"),
+       elem(DateTime.from_iso8601("2002-04-02T12:00:00+00:00"), 1)}
+    ]
     @equal_invalid_datetimes [
       {XSD.datetime("foo"), XSD.datetime("foo")}
     ]
@@ -173,6 +227,8 @@ defmodule XSD.EqualityTest do
     test "term equality", do: assert_term_equal(@term_equal_datetimes)
     test "value equality", do: assert_value_equal(@value_equal_datetimes)
     test "inequality", do: assert_unequal(@unequal_datetimes)
+    test "coerced value equality", do: assert_coerced_equal(@equal_datetimes_by_coercion)
+    test "coerced value inequality", do: assert_coerced_unequal(@unequal_datetimes_by_coercion)
     test "invalid equality", do: assert_equal_invalid(@equal_invalid_datetimes)
     test "invalid inequality", do: assert_unequal_invalid(@unequal_invalid_datetimes)
     test "incomparability", do: assert_incomparable(@incomparable_datetimes)
@@ -193,6 +249,18 @@ defmodule XSD.EqualityTest do
       {XSD.date("2002-04-03"), XSD.date("2002-04-02Z")},
       {XSD.date("2002-04-03Z"), XSD.date("2002-04-02")},
       {XSD.date("2002-04-03+00:00"), XSD.date("2002-04-02")},
+      {XSD.date("2002-04-03-00:00"), XSD.date("2002-04-02")}
+    ]
+    @equal_dates_by_coercion [
+      {XSD.date("2002-04-02"), Date.from_iso8601!("2002-04-02")}
+    ]
+    @unequal_dates_by_coercion [
+      {XSD.date("2002-04-02"), Date.from_iso8601!("2002-04-03")},
+      {XSD.date("2002-04-03+01:00"), Date.from_iso8601!("2002-04-02")},
+      {XSD.date("2002-04-03Z"), Date.from_iso8601!("2002-04-02")},
+      {XSD.date("2002-04-03+00:00"), Date.from_iso8601!("2002-04-02")},
+      {XSD.date("2002-04-03-00:00"), Date.from_iso8601!("2002-04-02")}
+    ]
     @equal_invalid_dates [
       {XSD.date("foo"), XSD.date("foo")}
     ]
@@ -218,6 +286,8 @@ defmodule XSD.EqualityTest do
     test "term equality", do: assert_term_equal(@term_equal_dates)
     test "value equality", do: assert_value_equal(@value_equal_dates)
     test "inequality", do: assert_unequal(@unequal_dates)
+    test "coerced value equality", do: assert_coerced_equal(@equal_dates_by_coercion)
+    test "coerced value inequality", do: assert_coerced_unequal(@unequal_dates_by_coercion)
     test "invalid equality", do: assert_equal_invalid(@equal_invalid_dates)
     test "invalid inequality", do: assert_unequal_invalid(@unequal_invalid_dates)
     test "incomparability", do: assert_incomparable(@incomparable_dates)
@@ -246,6 +316,12 @@ defmodule XSD.EqualityTest do
       {XSD.time("12:00:00"), XSD.time("13:00:00")},
       {XSD.time("00:00:00.0000Z"), XSD.time("00:00:00Z")}
     ]
+    @equal_times_by_coercion [
+      {XSD.time("12:00:00"), Time.from_iso8601!("12:00:00")}
+    ]
+    @unequal_times_by_coercion [
+      {XSD.time("12:00:00"), Time.from_iso8601!("13:00:00")}
+    ]
     @equal_invalid_times [
       {XSD.time("foo"), XSD.time("foo")}
     ]
@@ -261,6 +337,8 @@ defmodule XSD.EqualityTest do
     test "term equality", do: assert_term_equal(@term_equal_times)
     test "value equality", do: assert_value_equal(@value_equal_times)
     test "inequality", do: assert_unequal(@unequal_times)
+    test "coerced value equality", do: assert_coerced_equal(@equal_times_by_coercion)
+    test "coerced value inequality", do: assert_coerced_unequal(@unequal_times_by_coercion)
     test "invalid equality", do: assert_equal_invalid(@equal_invalid_times)
     test "invalid inequality", do: assert_unequal_invalid(@unequal_invalid_times)
     test "incomparability", do: assert_incomparable(@incomparable_times)
@@ -282,6 +360,20 @@ defmodule XSD.EqualityTest do
 
   defp assert_unequal(examples) do
     Enum.each(examples, fn example -> assert_comparable(example, true) end)
+    Enum.each(examples, fn example -> assert_equality(example, false) end)
+    Enum.each(examples, fn example -> assert_term_equality(example, false) end)
+    Enum.each(examples, fn example -> assert_value_equality(example, false) end)
+  end
+
+  defp assert_coerced_equal(examples) do
+    Enum.each(examples, fn example -> assert_comparable(example, false) end)
+    Enum.each(examples, fn example -> assert_equality(example, false) end)
+    Enum.each(examples, fn example -> assert_term_equality(example, false) end)
+    Enum.each(examples, fn example -> assert_value_equality(example, true) end)
+  end
+
+  defp assert_coerced_unequal(examples) do
+    Enum.each(examples, fn example -> assert_comparable(example, false) end)
     Enum.each(examples, fn example -> assert_equality(example, false) end)
     Enum.each(examples, fn example -> assert_term_equality(example, false) end)
     Enum.each(examples, fn example -> assert_value_equality(example, false) end)
@@ -333,7 +425,7 @@ defmodule XSD.EqualityTest do
     result = XSD.Literal.equal?(left, right)
 
     assert result == expected, """
-    expected XSD.Term.equal?(
+    expected XSD.Literal.equal?(
       #{inspect(left)},
       #{inspect(right)})
     to be:   #{inspect(expected)}
@@ -343,7 +435,7 @@ defmodule XSD.EqualityTest do
     result = XSD.Literal.equal?(right, left)
 
     assert result == expected, """
-    expected XSD.Term.equal?(
+    expected XSD.Literal.equal?(
       #{inspect(right)},
       #{inspect(left)})
     to be:   #{inspect(expected)}
@@ -355,7 +447,7 @@ defmodule XSD.EqualityTest do
     result = XSD.Literal.equal_value?(left, right)
 
     assert result == expected, """
-    expected XSD.Term.equal_value?(
+    expected XSD.Literal.equal_value?(
       #{inspect(left)},
       #{inspect(right)})
     to be:   #{inspect(expected)}
@@ -365,7 +457,7 @@ defmodule XSD.EqualityTest do
     result = XSD.Literal.equal_value?(right, left)
 
     assert result == expected, """
-    expected XSD.Term.equal_value?(
+    expected XSD.Literal.equal_value?(
       #{inspect(right)},
       #{inspect(left)})
     to be:   #{inspect(expected)}

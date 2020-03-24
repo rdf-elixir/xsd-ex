@@ -146,7 +146,15 @@ defmodule XSD.DateTime do
     lexical1 == lexical2
   end
 
-  def equal_value?(_, _), do: false
+  def equal_value?(left, right) do
+    cond do
+      is_nil(left) -> false
+      is_nil(right) -> false
+      not XSD.literal?(left) -> equal_value?(XSD.Literal.coerce(left), right)
+      not XSD.literal?(right) -> equal_value?(left, XSD.Literal.coerce(right))
+      true -> false
+    end
+  end
 
   @impl XSD.Datatype
   def compare(left, right)

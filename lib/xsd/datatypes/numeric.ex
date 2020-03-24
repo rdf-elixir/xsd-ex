@@ -55,7 +55,11 @@ defmodule XSD.Numeric do
       left == right
   end
 
-  def equal_value?(_, _), do: false
+  def equal_value?(nil, _), do: false
+  def equal_value?(_, nil), do: false
+
+  def equal_value?(left, right),
+    do: equal_value?(XSD.Literal.coerce(left), XSD.Literal.coerce(right))
 
   defp equal_decimal_value?(%D{} = left, %D{} = right), do: D.equal?(left, right)
 

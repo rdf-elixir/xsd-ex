@@ -65,7 +65,15 @@ defmodule XSD.Datatype.Primitive do
         canonical(literal1).value == canonical(literal2).value
       end
 
-      def equal_value?(_, _), do: false
+      def equal_value?(left, right) do
+        cond do
+          is_nil(left) -> false
+          is_nil(right) -> false
+          not XSD.literal?(right) -> equal_value?(left, XSD.Literal.coerce(right))
+          not XSD.literal?(left) -> equal_value?(XSD.Literal.coerce(left), right)
+          true -> false
+        end
+      end
 
       @impl XSD.Datatype
       @spec compare(t, t) :: XSD.Datatype.comparison_result() | :indeterminate | nil

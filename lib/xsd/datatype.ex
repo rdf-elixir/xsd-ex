@@ -40,8 +40,9 @@ defmodule XSD.Datatype do
   def comparable?(datatype, datatype), do: true
 
   def comparable?(datatype1, datatype2) do
-    derived_from?(datatype1, datatype2) or derived_from?(datatype2, datatype1) or
-      (XSD.Numeric.datatype?(datatype1) and XSD.Numeric.datatype?(datatype2))
+    XSD.datatype?(datatype1) and XSD.datatype?(datatype2) and
+      (derived_from?(datatype1, datatype2) or derived_from?(datatype2, datatype1) or
+         (XSD.Numeric.datatype?(datatype1) and XSD.Numeric.datatype?(datatype2)))
   end
 
   @doc """
@@ -93,7 +94,7 @@ defmodule XSD.Datatype do
   The default implementation of the `_using__` macro compares the values of the
   `canonical/1` forms of the given literal of this datatype.
   """
-  @callback equal_value?(XSD.Literal.t(), XSD.Literal.t()) :: boolean
+  @callback equal_value?(XSD.Literal.t() | any, XSD.Literal.t() | any) :: boolean
 
   @doc """
   Compares two `XSD.Datatype` literals.

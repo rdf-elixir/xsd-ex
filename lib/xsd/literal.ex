@@ -32,16 +32,20 @@ defmodule XSD.Literal do
   def coerce(%NaiveDateTime{} = datetime), do: XSD.DateTime.new(datetime)
   def coerce(%Date{} = date), do: XSD.Date.new(date)
   def coerce(%Time{} = time), do: XSD.Time.new(time)
+  def coerce(%datatype{} = literal) when datatype in @datatypes, do: literal
   def coerce(_), do: nil
 
   @spec equal?(any, any) :: boolean
   def equal?(left, right), do: left == right
 
-  @spec equal_value?(t, t) :: boolean
+  @spec equal_value?(t | any, t | any) :: boolean
   def equal_value?(left, right)
 
   def equal_value?(%datatype{} = left, right) when datatype in @datatypes,
     do: datatype.equal_value?(left, right)
+
+  def equal_value?(left, right) when not is_nil(left),
+    do: equal_value?(coerce(left), right)
 
   def equal_value?(_, _), do: false
 
