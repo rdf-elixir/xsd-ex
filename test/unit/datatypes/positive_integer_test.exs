@@ -10,8 +10,8 @@ defmodule XSD.PositiveIntegerTest do
       min_inclusive: 1,
       max_inclusive: nil
     },
-    valid: XSD.TestData.valid_positive_integer(),
-    invalid: XSD.TestData.invalid_positive_integer()
+    valid: XSD.TestData.valid_positive_integers(),
+    invalid: XSD.TestData.invalid_positive_integers()
 
   describe "cast/1" do
     test "casting a positive_integer returns the input as it is" do

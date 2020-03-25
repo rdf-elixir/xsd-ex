@@ -10,8 +10,8 @@ defmodule XSD.NonNegativeIntegerTest do
       min_inclusive: 0,
       max_inclusive: nil
     },
-    valid: XSD.TestData.valid_non_negative_integer(),
-    invalid: XSD.TestData.invalid_non_negative_integer()
+    valid: XSD.TestData.valid_non_negative_integers(),
+    invalid: XSD.TestData.invalid_non_negative_integers()
 
   describe "cast/1" do
     test "casting a non_negative_integer returns the input as it is" do

@@ -9,8 +9,8 @@ defmodule XSD.IntegerTest do
       min_inclusive: nil,
       max_inclusive: nil
     },
-    valid: XSD.TestData.valid_integer(),
-    invalid: XSD.TestData.invalid_integer()
+    valid: XSD.TestData.valid_integers(),
+    invalid: XSD.TestData.invalid_integers()
 
   describe "cast/1" do
     test "casting an integer returns the input as it is" do
