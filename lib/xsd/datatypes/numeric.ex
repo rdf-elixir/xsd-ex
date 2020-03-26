@@ -18,10 +18,27 @@ defmodule XSD.Numeric do
                XSD.UnsignedByte,
                XSD.NonPositiveInteger,
                XSD.NegativeInteger,
-               XSD.Double
+               XSD.Double,
+               XSD.Float
              ])
 
-  @type t :: XSD.Decimal.t() | XSD.Integer.t() | XSD.Double.t()
+  @type t ::
+          XSD.Decimal.t()
+          | XSD.Integer.t()
+          | XSD.Long.t()
+          | XSD.Int.t()
+          | XSD.Short.t()
+          | XSD.Byte.t()
+          | XSD.NonNegativeInteger.t()
+          | XSD.PositiveInteger.t()
+          | XSD.UnsignedLong.t()
+          | XSD.UnsignedInt.t()
+          | XSD.UnsignedShort.t()
+          | XSD.UnsignedByte.t()
+          | XSD.NonPositiveInteger.t()
+          | XSD.NegativeInteger.t()
+          | XSD.Double.t()
+          | XSD.Float.t()
 
   @doc """
   The list of all numeric datatypes.
@@ -155,8 +172,9 @@ defmodule XSD.Numeric do
   defp zero_value?(_), do: false
 
   @spec negative_zero?(any) :: boolean
-  def negative_zero?(%XSD.Double{value: zero, uncanonical_lexical: "-" <> _}) when zero == 0,
-    do: true
+  def negative_zero?(%datatype{value: zero, uncanonical_lexical: "-" <> _})
+      when zero == 0 and datatype in [XSD.Double, XSD.Float],
+      do: true
 
   def negative_zero?(%{value: %D{sign: -1, coef: 0}}), do: true
   def negative_zero?(_), do: false
@@ -285,7 +303,7 @@ defmodule XSD.Numeric do
       arg1, arg2, result_type ->
         if zero_value?(arg2) do
           cond do
-            result_type not in [XSD.Double] -> nil
+            result_type not in [XSD.Double, XSD.Float] -> nil
             zero_value?(arg1) -> :nan
             negative_zero and arg1 < 0 -> :positive_infinity
             negative_zero -> :negative_infinity
@@ -378,17 +396,18 @@ defmodule XSD.Numeric do
     end
   end
 
-  def round(%XSD.Double{value: value} = literal, _)
-      when value in ~w[nan positive_infinity negative_infinity]a,
+  def round(%datatype{value: value} = literal, _)
+      when datatype in [XSD.Double, XSD.Float] and
+             value in ~w[nan positive_infinity negative_infinity]a,
       do: literal
 
-  def round(%XSD.Double{} = literal, precision) do
-    if XSD.Double.valid?(literal) do
+  def round(%datatype{} = literal, precision) when datatype in [XSD.Double, XSD.Float] do
+    if datatype.valid?(literal) do
       literal.value
       |> new_decimal()
       |> xpath_round(precision)
       |> D.to_float()
-      |> XSD.Double.new()
+      |> datatype.new()
     end
   end
 
@@ -445,17 +464,18 @@ defmodule XSD.Numeric do
     end
   end
 
-  def ceil(%XSD.Double{value: value} = literal)
-      when value in ~w[nan positive_infinity negative_infinity]a,
+  def ceil(%datatype{value: value} = literal)
+      when datatype in [XSD.Double, XSD.Float] and
+             value in ~w[nan positive_infinity negative_infinity]a,
       do: literal
 
-  def ceil(%XSD.Double{} = literal) do
-    if XSD.Double.valid?(literal) do
+  def ceil(%datatype{} = literal) when datatype in [XSD.Double, XSD.Float] do
+    if datatype.valid?(literal) do
       literal.value
       |> Float.ceil()
       |> trunc()
       |> to_string()
-      |> XSD.Double.new()
+      |> datatype.new()
     end
   end
 
@@ -498,17 +518,18 @@ defmodule XSD.Numeric do
     end
   end
 
-  def floor(%XSD.Double{value: value} = literal)
-      when value in ~w[nan positive_infinity negative_infinity]a,
+  def floor(%datatype{value: value} = literal)
+      when datatype in [XSD.Double, XSD.Float] and
+             value in ~w[nan positive_infinity negative_infinity]a,
       do: literal
 
-  def floor(%XSD.Double{} = literal) do
-    if XSD.Double.valid?(literal) do
+  def floor(%datatype{} = literal) when datatype in [XSD.Double, XSD.Float] do
+    if datatype.valid?(literal) do
       literal.value
       |> Float.floor()
       |> trunc()
       |> to_string()
-      |> XSD.Double.new()
+      |> datatype.new()
     end
   end
 
@@ -556,16 +577,20 @@ defmodule XSD.Numeric do
   defp type_conversion(%{value: left_value}, %XSD.Decimal{} = right_decimal, XSD.Decimal),
     do: {XSD.decimal(left_value), right_decimal}
 
-  defp type_conversion(%XSD.Decimal{value: left_decimal}, right, XSD.Double),
-    do: {left_decimal |> D.to_float() |> XSD.double(), right}
+  defp type_conversion(%XSD.Decimal{value: left_decimal}, right, datatype)
+       when datatype in [XSD.Double, XSD.Float],
+       do: {left_decimal |> D.to_float() |> XSD.double(), right}
 
-  defp type_conversion(left, %XSD.Decimal{value: right_decimal}, XSD.Double),
-    do: {left, right_decimal |> D.to_float() |> XSD.double()}
+  defp type_conversion(left, %XSD.Decimal{value: right_decimal}, datatype)
+       when datatype in [XSD.Double, XSD.Float],
+       do: {left, right_decimal |> D.to_float() |> XSD.double()}
 
   defp type_conversion(left, right, _), do: {left, right}
 
   defp result_type(_, XSD.Double, _), do: XSD.Double
   defp result_type(_, _, XSD.Double), do: XSD.Double
+  defp result_type(_, XSD.Float, _), do: XSD.Float
+  defp result_type(_, _, XSD.Float), do: XSD.Float
   defp result_type(_, XSD.Decimal, _), do: XSD.Decimal
   defp result_type(_, _, XSD.Decimal), do: XSD.Decimal
   defp result_type(:/, _, _), do: XSD.Decimal

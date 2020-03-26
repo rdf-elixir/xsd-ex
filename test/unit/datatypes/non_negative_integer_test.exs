@@ -75,8 +75,20 @@ defmodule XSD.NonNegativeIntegerTest do
       assert XSD.double("+INF") |> XSD.NonNegativeInteger.cast() == nil
     end
 
-    @tag skip: "TODO: XSD.Float datatype"
-    test "casting a float"
+    test "casting a float" do
+      assert XSD.float(0) |> XSD.NonNegativeInteger.cast() == XSD.non_negative_integer(0)
+      assert XSD.float(0.0) |> XSD.NonNegativeInteger.cast() == XSD.non_negative_integer(0)
+      assert XSD.float(0.1) |> XSD.NonNegativeInteger.cast() == XSD.non_negative_integer(0)
+      assert XSD.float("+0") |> XSD.NonNegativeInteger.cast() == XSD.non_negative_integer(0)
+      assert XSD.float("+0.0") |> XSD.NonNegativeInteger.cast() == XSD.non_negative_integer(0)
+      assert XSD.float("-0.0") |> XSD.NonNegativeInteger.cast() == XSD.non_negative_integer(0)
+      assert XSD.float("0.0E0") |> XSD.NonNegativeInteger.cast() == XSD.non_negative_integer(0)
+      assert XSD.float(1) |> XSD.NonNegativeInteger.cast() == XSD.non_negative_integer(1)
+      assert XSD.float(3.14) |> XSD.NonNegativeInteger.cast() == XSD.non_negative_integer(3)
+
+      assert XSD.float("NAN") |> XSD.NonNegativeInteger.cast() == nil
+      assert XSD.float("+INF") |> XSD.NonNegativeInteger.cast() == nil
+    end
 
     test "with invalid literals" do
       assert XSD.non_negative_integer(3.14) |> XSD.NonNegativeInteger.cast() == nil

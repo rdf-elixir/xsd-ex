@@ -1,6 +1,9 @@
 defmodule XSD.Integer do
   @moduledoc """
   `XSD.Datatype` for XSD integers.
+
+  Although the XSD spec defines integers as derived from `xsd:decimal` we implement
+  it here as a primitive datatype for simplicity and performance reasons.
   """
 
   @type valid_value :: integer
@@ -58,7 +61,8 @@ defmodule XSD.Integer do
     |> new()
   end
 
-  def cast(%XSD.Double{value: value}) when is_float(value) do
+  def cast(%datatype{value: value})
+      when datatype in [XSD.Double, XSD.Float] and is_float(value) do
     value
     |> trunc()
     |> new()

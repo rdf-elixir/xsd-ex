@@ -83,6 +83,7 @@ defmodule XSD.EqualityTest do
       {XSD.double("1.0"), XSD.double(1.0)},
       {XSD.double("-42.0"), XSD.double(-42.0)},
       {XSD.double("1.0"), XSD.double(1.0)},
+      {XSD.float("1.0"), XSD.float(1.0)},
       {XSD.decimal("1.0"), XSD.decimal(1.0)},
       {XSD.decimal("-42.0"), XSD.decimal(-42.0)},
       {XSD.decimal("1.0"), XSD.decimal(1.0)}
@@ -92,13 +93,16 @@ defmodule XSD.EqualityTest do
       {XSD.integer("42"), XSD.positive_integer("42")},
       {XSD.integer("42"), XSD.double("42")},
       {XSD.integer("42"), XSD.decimal("42")},
+      {XSD.double(3.14), XSD.float(3.14)},
       {XSD.double(3.14), XSD.decimal(3.14)},
+      {XSD.float(3.14), XSD.decimal(3.14)},
       {XSD.integer(42), XSD.integer("042")},
       {XSD.integer("42"), XSD.integer("042")},
       {XSD.integer(42), XSD.integer("+42")},
       {XSD.integer("42"), XSD.integer("+42")},
       {XSD.integer(42), XSD.decimal(42.0)},
       {XSD.integer(42), XSD.double(42.0)},
+      {XSD.integer(42), XSD.float(42.0)},
       {XSD.non_negative_integer(42), XSD.decimal(42.0)},
       {XSD.non_negative_integer(42), XSD.double(42.0)},
       {XSD.positive_integer(42), XSD.decimal(42.0)},
@@ -128,18 +132,21 @@ defmodule XSD.EqualityTest do
       {XSD.decimal(3.14), Elixir.Decimal.from_float(3.14)},
       {XSD.double(42), 42},
       {XSD.double(3.14), 3.14},
-      {XSD.double(3.14), Elixir.Decimal.from_float(3.14)}
+      {XSD.double(3.14), Elixir.Decimal.from_float(3.14)},
+      {XSD.float(3.14), 3.14}
     ]
     @unequal_numerics_by_coercion [
       {XSD.integer(3), 3.14},
       {XSD.integer(3), Elixir.Decimal.from_float(3.14)},
       {XSD.double(3.14), 3},
+      {XSD.float(3.14), 3},
       {XSD.decimal(3.14), 3}
     ]
     @equal_invalid_numerics [
       {XSD.integer("foo"), XSD.integer("foo")},
       {XSD.decimal("foo"), XSD.decimal("foo")},
       {XSD.double("foo"), XSD.double("foo")},
+      {XSD.float("foo"), XSD.float("foo")},
       {XSD.non_negative_integer("foo"), XSD.non_negative_integer("foo")},
       {XSD.positive_integer("foo"), XSD.positive_integer("foo")}
     ]
@@ -149,6 +156,7 @@ defmodule XSD.EqualityTest do
       {XSD.decimal("1.0E0"), XSD.decimal(1.0)},
       {XSD.decimal("1.0E0"), XSD.decimal("1.0")},
       {XSD.double("foo"), XSD.double("bar")},
+      {XSD.float("foo"), XSD.float("bar")},
       {XSD.non_negative_integer("foo"), XSD.non_negative_integer("bar")},
       {XSD.positive_integer("foo"), XSD.positive_integer("bar")}
     ]

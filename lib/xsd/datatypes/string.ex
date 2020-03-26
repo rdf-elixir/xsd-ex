@@ -35,7 +35,7 @@ defmodule XSD.String do
     end
   end
 
-  def cast(%XSD.Double{} = xsd_double) do
+  def cast(%datatype{} = xsd_double) when datatype in [XSD.Double, XSD.Float] do
     cond do
       XSD.Numeric.negative_zero?(xsd_double) ->
         new("-0")
@@ -49,7 +49,7 @@ defmodule XSD.String do
         |> cast()
 
       true ->
-        default_canonical_cast(xsd_double, XSD.Double)
+        default_canonical_cast(xsd_double, datatype)
     end
   end
 

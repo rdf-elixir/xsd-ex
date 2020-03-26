@@ -97,6 +97,7 @@ defmodule XSD.Decimal do
   def cast(%XSD.Integer{} = xsd_integer), do: new(xsd_integer.value)
 
   def cast(%XSD.Double{value: value}) when is_float(value), do: new(value)
+  def cast(%XSD.Float{value: value}) when is_float(value), do: new(value)
 
   def cast(literal_or_value), do: super(literal_or_value)
 

@@ -93,8 +93,17 @@ defmodule XSD.DecimalTest do
       assert XSD.double("+INF") |> XSD.Decimal.cast() == nil
     end
 
-    @tag skip: "TODO: XSD.Float datatype"
-    test "casting a float"
+    test "casting a float" do
+      assert XSD.float(0.0) |> XSD.Decimal.cast() == XSD.decimal(0.0)
+      assert XSD.float("-0.0") |> XSD.Decimal.cast() == XSD.decimal(0.0)
+      assert XSD.float(0.1) |> XSD.Decimal.cast() == XSD.decimal(0.1)
+      assert XSD.float(1) |> XSD.Decimal.cast() == XSD.decimal(1.0)
+      assert XSD.float(3.14) |> XSD.Decimal.cast() == XSD.decimal(3.14)
+      assert XSD.float(10.1e1) |> XSD.Decimal.cast() == XSD.decimal(101.0)
+
+      assert XSD.float("NAN") |> XSD.Decimal.cast() == nil
+      assert XSD.float("+INF") |> XSD.Decimal.cast() == nil
+    end
 
     test "with invalid literals" do
       assert XSD.boolean("42") |> XSD.Decimal.cast() == nil

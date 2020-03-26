@@ -19,10 +19,12 @@ defmodule XSD.NumericTest do
   test "negative_zero?/1" do
     Enum.each(@negative_zeros, fn negative_zero ->
       assert Numeric.negative_zero?(XSD.double(negative_zero))
+      assert Numeric.negative_zero?(XSD.float(negative_zero))
       assert Numeric.negative_zero?(XSD.decimal(negative_zero))
     end)
 
     refute Numeric.negative_zero?(XSD.double("-0.00001"))
+    refute Numeric.negative_zero?(XSD.float("-0.00001"))
     refute Numeric.negative_zero?(XSD.decimal("-0.00001"))
   end
 
@@ -38,15 +40,18 @@ defmodule XSD.NumericTest do
     ]
     |> Enum.each(fn positive_zero ->
       assert Numeric.zero?(XSD.double(positive_zero))
+      assert Numeric.zero?(XSD.float(positive_zero))
       assert Numeric.zero?(XSD.decimal(positive_zero))
     end)
 
     Enum.each(@negative_zeros, fn negative_zero ->
       assert Numeric.zero?(XSD.double(negative_zero))
+      assert Numeric.zero?(XSD.float(negative_zero))
       assert Numeric.zero?(XSD.decimal(negative_zero))
     end)
 
     refute Numeric.zero?(XSD.double("-0.00001"))
+    refute Numeric.zero?(XSD.float("-0.00001"))
     refute Numeric.zero?(XSD.decimal("-0.00001"))
   end
 
@@ -67,6 +72,16 @@ defmodule XSD.NumericTest do
     test "xsd:decimal literal + xsd:double literal" do
       assert result = %XSD.Double{} = Numeric.add(XSD.decimal(1.1), XSD.double(2.2))
       assert_in_delta result.value, XSD.double(3.3).value, 0.000000000000001
+    end
+
+    test "xsd:float literal + xsd:integer literal" do
+      assert result = %XSD.Float{} = Numeric.add(XSD.float(1.1), XSD.integer(2))
+      assert_in_delta result.value, XSD.float(3.1).value, 0.000000000000001
+    end
+
+    test "xsd:decimal literal + xsd:float literal" do
+      assert result = %XSD.Float{} = Numeric.add(XSD.decimal(1.1), XSD.float(2.2))
+      assert_in_delta result.value, XSD.float(3.3).value, 0.000000000000001
     end
 
     test "if one of the operands is a zero or a finite number and the other is INF or -INF, INF or -INF is returned" do
@@ -416,9 +431,6 @@ defmodule XSD.NumericTest do
       assert XSD.integer(-85) |> Numeric.round(-1) == XSD.integer(-80)
     end
 
-    @tag skip: "TODO: xsd:float"
-    test "with xsd:float"
-
     test "with xsd:double" do
       assert XSD.double(3.14) |> Numeric.round(1) == XSD.double(3.1)
       assert XSD.double(3.1415e0) |> Numeric.round(2) == XSD.double(3.14e0)
@@ -426,6 +438,15 @@ defmodule XSD.NumericTest do
       assert XSD.double("INF") |> Numeric.round(1) == XSD.double("INF")
       assert XSD.double("-INF") |> Numeric.round(2) == XSD.double("-INF")
       assert XSD.double("NAN") |> Numeric.round(3) == XSD.double("NAN")
+    end
+
+    test "with xsd:float" do
+      assert XSD.float(3.14) |> Numeric.round(1) == XSD.float(3.1)
+      assert XSD.float(3.1415e0) |> Numeric.round(2) == XSD.float(3.14e0)
+
+      assert XSD.float("INF") |> Numeric.round(1) == XSD.float("INF")
+      assert XSD.float("-INF") |> Numeric.round(2) == XSD.float("-INF")
+      assert XSD.float("NAN") |> Numeric.round(3) == XSD.float("NAN")
     end
 
     test "with xsd:decimal" do
@@ -464,6 +485,15 @@ defmodule XSD.NumericTest do
       assert XSD.double("NAN") |> Numeric.ceil() == XSD.double("NAN")
     end
 
+    test "with xsd:float" do
+      assert XSD.float(10.5) |> Numeric.ceil() == XSD.float("11")
+      assert XSD.float(-10.5) |> Numeric.ceil() == XSD.float("-10")
+
+      assert XSD.float("INF") |> Numeric.ceil() == XSD.float("INF")
+      assert XSD.float("-INF") |> Numeric.ceil() == XSD.float("-INF")
+      assert XSD.float("NAN") |> Numeric.ceil() == XSD.float("NAN")
+    end
+
     test "with xsd:decimal" do
       assert XSD.decimal(10.5) |> Numeric.ceil() == XSD.decimal("11")
       assert XSD.decimal(-10.5) |> Numeric.ceil() == XSD.decimal("-10")
@@ -497,6 +527,15 @@ defmodule XSD.NumericTest do
       assert XSD.double("INF") |> Numeric.floor() == XSD.double("INF")
       assert XSD.double("-INF") |> Numeric.floor() == XSD.double("-INF")
       assert XSD.double("NAN") |> Numeric.floor() == XSD.double("NAN")
+    end
+
+    test "with xsd:float" do
+      assert XSD.float(10.5) |> Numeric.floor() == XSD.float("10")
+      assert XSD.float(-10.5) |> Numeric.floor() == XSD.float("-11")
+
+      assert XSD.float("INF") |> Numeric.floor() == XSD.float("INF")
+      assert XSD.float("-INF") |> Numeric.floor() == XSD.float("-INF")
+      assert XSD.float("NAN") |> Numeric.floor() == XSD.float("NAN")
     end
 
     test "with xsd:decimal" do

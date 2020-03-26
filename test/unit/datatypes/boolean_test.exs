@@ -68,8 +68,18 @@ defmodule XSD.BooleanTest do
       assert XSD.double("-INF") |> XSD.Boolean.cast() == XSD.true()
     end
 
-    @tag skip: "TODO: XSD.Float datatype"
-    test "casting a float"
+    test "casting a float" do
+      assert XSD.float(0) |> XSD.Boolean.cast() == XSD.false()
+      assert XSD.float(0.0) |> XSD.Boolean.cast() == XSD.false()
+      assert XSD.float("+0") |> XSD.Boolean.cast() == XSD.false()
+      assert XSD.float("-0.0") |> XSD.Boolean.cast() == XSD.false()
+      assert XSD.float("0.0E0") |> XSD.Boolean.cast() == XSD.false()
+      assert XSD.float("NAN") |> XSD.Boolean.cast() == XSD.false()
+
+      assert XSD.float(1) |> XSD.Boolean.cast() == XSD.true()
+      assert XSD.float(0.1) |> XSD.Boolean.cast() == XSD.true()
+      assert XSD.float("-INF") |> XSD.Boolean.cast() == XSD.true()
+    end
 
     test "with invalid literals" do
       assert XSD.boolean("42") |> XSD.Boolean.cast() == nil

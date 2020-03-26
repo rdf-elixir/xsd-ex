@@ -124,6 +124,37 @@ defmodule XSD.TestData do
   @invalid_unsigned_longs [18_446_744_073_709_551_616, "18446744073709551616"] ++
                             @invalid_non_negative_integers
 
+  @valid_floats %{
+    # input => { value, lexical, canonicalized }
+    0 => {0.0, "0.0", "0.0E0"},
+    42 => {42.0, "42.0", "4.2E1"},
+    0.0e0 => {0.0, "0.0", "0.0E0"},
+    1.0e0 => {1.0, "1.0", "1.0E0"},
+    :positive_infinity => {:positive_infinity, nil, "INF"},
+    :negative_infinity => {:negative_infinity, nil, "-INF"},
+    :nan => {:nan, nil, "NaN"},
+    "1.0E0" => {1.0e0, nil, "1.0E0"},
+    "0.0" => {0.0, "0.0", "0.0E0"},
+    "1" => {1.0e0, "1", "1.0E0"},
+    "01" => {1.0e0, "01", "1.0E0"},
+    "0123" => {1.23e2, "0123", "1.23E2"},
+    "-1" => {-1.0e0, "-1", "-1.0E0"},
+    "+01.000" => {1.0e0, "+01.000", "1.0E0"},
+    "1.0" => {1.0e0, "1.0", "1.0E0"},
+    "123.456" => {1.23456e2, "123.456", "1.23456E2"},
+    "1.0e+1" => {1.0e1, "1.0e+1", "1.0E1"},
+    "1.0e-10" => {1.0e-10, "1.0e-10", "1.0E-10"},
+    "123.456e4" => {1.23456e6, "123.456e4", "1.23456E6"},
+    "1.E-8" => {1.0e-8, "1.E-8", "1.0E-8"},
+    "3E1" => {3.0e1, "3E1", "3.0E1"},
+    "INF" => {:positive_infinity, nil, "INF"},
+    "Inf" => {:positive_infinity, "Inf", "INF"},
+    "-INF" => {:negative_infinity, nil, "-INF"},
+    "NaN" => {:nan, nil, "NaN"}
+  }
+
+  @invalid_floats ["foo", "12.xyz", "1.0ez", "+INF", true, false, "1.1e1 foo", "foo 1.1e1"]
+
   def valid_integers, do: @valid_integers
   def valid_non_negative_integers, do: @valid_non_negative_integers
   def valid_non_positive_integers, do: @valid_non_positive_integers
@@ -137,6 +168,7 @@ defmodule XSD.TestData do
   def valid_unsigned_shorts, do: @valid_unsigned_shorts
   def valid_unsigned_ints, do: @valid_unsigned_ints
   def valid_unsigned_longs, do: @valid_unsigned_longs
+  def valid_floats, do: @valid_floats
 
   def invalid_integers, do: @basic_invalid_integers
   def invalid_non_negative_integers, do: @invalid_non_negative_integers
@@ -151,4 +183,5 @@ defmodule XSD.TestData do
   def invalid_unsigned_shorts, do: @invalid_unsigned_shorts
   def invalid_unsigned_ints, do: @invalid_unsigned_ints
   def invalid_unsigned_longs, do: @invalid_unsigned_longs
+  def invalid_floats, do: @invalid_floats
 end

@@ -55,8 +55,25 @@ defmodule XSD.StringTest do
       assert XSD.double(:negative_infinity) |> XSD.String.cast() == XSD.string("-INF")
     end
 
-    @tag skip: "TODO: XSD.Float datatype"
-    test "casting a float"
+    test "casting a float" do
+      assert XSD.float(0) |> XSD.String.cast() == XSD.string("0")
+      assert XSD.float(0.0) |> XSD.String.cast() == XSD.string("0")
+      assert XSD.float("+0") |> XSD.String.cast() == XSD.string("0")
+      assert XSD.float("-0") |> XSD.String.cast() == XSD.string("-0")
+      assert XSD.float(0.1) |> XSD.String.cast() == XSD.string("0.1")
+      assert XSD.float(3.14) |> XSD.String.cast() == XSD.string("3.14")
+      assert XSD.float(0.000_001) |> XSD.String.cast() == XSD.string("0.000001")
+      assert XSD.float(123_456) |> XSD.String.cast() == XSD.string("123456")
+      assert XSD.float(1_234_567) |> XSD.String.cast() == XSD.string("1.234567E6")
+      assert XSD.float(0.0000001) |> XSD.String.cast() == XSD.string("1.0E-7")
+      assert XSD.float(1.0e-10) |> XSD.String.cast() == XSD.string("1.0E-10")
+      assert XSD.float("1.0e-10") |> XSD.String.cast() == XSD.string("1.0E-10")
+      assert XSD.float(1.26743223e15) |> XSD.String.cast() == XSD.string("1.26743223E15")
+
+      assert XSD.float(:nan) |> XSD.String.cast() == XSD.string("NaN")
+      assert XSD.float(:positive_infinity) |> XSD.String.cast() == XSD.string("INF")
+      assert XSD.float(:negative_infinity) |> XSD.String.cast() == XSD.string("-INF")
+    end
 
     test "casting a datetime" do
       assert XSD.datetime(~N[2010-01-01T12:34:56]) |> XSD.String.cast() ==
