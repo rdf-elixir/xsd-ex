@@ -35,6 +35,14 @@ defmodule XSD.Literal do
   def coerce(%datatype{} = literal) when datatype in @datatypes, do: literal
   def coerce(_), do: nil
 
+  @spec valid?(t() | any) :: boolean
+  def valid?(literal)
+
+  def valid?(%datatype{} = literal) when datatype in @datatypes,
+    do: datatype.valid?(literal)
+
+  def valid?(_), do: false
+
   @spec equal?(any, any) :: boolean
   def equal?(left, right), do: left == right
 

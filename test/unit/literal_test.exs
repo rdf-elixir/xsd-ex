@@ -89,6 +89,10 @@ defmodule XSD.LiteralTest do
                ~T"12:00:00" |> XSD.time()
     end
 
+    test "with XSD.Literals" do
+      assert XSD.integer(42) |> XSD.Literal.coerce() == XSD.integer(42)
+    end
+
     test "with inconvertible values" do
       assert self() |> XSD.Literal.coerce() == nil
     end
