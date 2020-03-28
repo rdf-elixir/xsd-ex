@@ -1,4 +1,8 @@
 defmodule XSD.Literal do
+  @moduledoc """
+  A generic interface to all `XSD.Datatype` struct implementations.
+  """
+
   @type t ::
           XSD.Boolean.t()
           | XSD.Integer.t()
@@ -42,6 +46,14 @@ defmodule XSD.Literal do
     do: datatype.valid?(literal)
 
   def valid?(_), do: false
+
+  @spec canonical(t()) :: t()
+  def canonical(%datatype{} = literal) when datatype in @datatypes,
+    do: datatype.canonical(literal)
+
+  @spec lexical(t()) :: String.t()
+  def lexical(%datatype{} = literal) when datatype in @datatypes,
+    do: datatype.lexical(literal)
 
   @spec equal?(any, any) :: boolean
   def equal?(left, right), do: left == right
