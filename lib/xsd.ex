@@ -3,6 +3,16 @@ defmodule XSD do
   TODO: Documentation for XSD.
   """
 
+  @xsd_namespace "http://www.w3.org/2001/XMLSchema#"
+
+  @doc """
+  Returns to official XSD namespace IRI.
+
+  `"#{@xsd_namespace}"`
+  """
+  @spec namespace() :: String.t()
+  def namespace(), do: @xsd_namespace
+
   @datatypes [
                XSD.Boolean,
                XSD.String,
