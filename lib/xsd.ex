@@ -18,7 +18,8 @@ defmodule XSD do
                XSD.String,
                XSD.Date,
                XSD.Time,
-               XSD.DateTime
+               XSD.DateTime,
+               XSD.AnyURI
              ]
              |> MapSet.new()
              |> MapSet.union(MapSet.new(XSD.Numeric.datatypes()))
@@ -56,6 +57,9 @@ defmodule XSD do
 
   defdelegate datetime(value), to: XSD.DateTime, as: :new
   defdelegate datetime(value, opts), to: XSD.DateTime, as: :new
+
+  defdelegate any_uri(value), to: XSD.AnyURI, as: :new
+  defdelegate any_uri(value, opts), to: XSD.AnyURI, as: :new
 
   defdelegate unquote(true)(), to: XSD.Boolean.Value
   defdelegate unquote(false)(), to: XSD.Boolean.Value
