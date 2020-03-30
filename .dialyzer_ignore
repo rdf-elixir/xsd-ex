@@ -4,19 +4,30 @@
 :8: The pattern {_@4, _@5} can never match the type #{'__struct__':='Elixir.DateTime' | 'Elixir.NaiveDateTime', 'calendar':=atom(), 'day':=pos_integer(), 'hour':=non_neg_integer(), 'microsecond':={non_neg_integer(),non_neg_integer()}, 'minute':=non_neg_integer(), 'month':=pos_integer(), 'second':=non_neg_integer(), 'year':=integer(), 'std_offset'=>integer(), 'time_zone'=>binary(), 'utc_offset'=>integer(), 'zone_abbr'=>binary()}
 :8: The pattern {_@4, _@5} can never match the type #{'__struct__':='Elixir.Decimal', 'coef':=non_neg_integer(), 'exp':=integer(), 'sign':=-1 | 1}
 :9: The pattern {_@4, _@5} can never match the type 'nan' | 'negative_infinity' | 'positive_infinity' | float()
-:9: The pattern {_@4, _@5} can never match the type integer()
 :8: The pattern {_@4, _@5} can never match the type binary()
 :2: The pattern {_@4, _@5} can never match the type integer()
+:9: The pattern {_@4, _@5} can never match the type integer()
+:11: The pattern {_@4, _@5} can never match the type integer()
+:10: The pattern {_@4, _@5} can never match the type binary()
 :8: Function build_invalid/2 will never be called
 :8: The pattern 'nil' can never match the type binary()
+:10: The pattern 'nil' can never match the type binary()
 
 # Similarly here with general derived_from?/1 implementation being the cause
 :2: The test 'Elixir.XSD.Integer' == 'nil' can never evaluate to 'true'
+:2: The test 'Elixir.XSD.Short' == 'nil' can never evaluate to 'true'
+:2: The test 'Elixir.XSD.Long' == 'nil' can never evaluate to 'true'
+:2: The test 'Elixir.XSD.NonPositiveInteger' == 'nil' can never evaluate to 'true'
 :2: The test 'Elixir.XSD.NonNegativeInteger' == 'nil' can never evaluate to 'true'
+:2: The test 'Elixir.XSD.Int' == 'nil' can never evaluate to 'true'
+:2: The test 'Elixir.XSD.UnsignedShort' == 'nil' can never evaluate to 'true'
+:2: The test 'Elixir.XSD.UnsignedLong' == 'nil' can never evaluate to 'true'
+:2: The test 'Elixir.XSD.UnsignedInt' == 'nil' can never evaluate to 'true'
+:9: The test 'Elixir.XSD.Double' == 'nil' can never evaluate to 'true'
 
 # Similarly here, but in another generated function (yet unknown which one in particular)
 :9: The variable _ can never match since previous clauses completely covered the type #{'__struct__':='Elixir.XSD.Boolean', 'uncanonical_lexical':='nil' | binary(), 'value':='false' | 'nil' | 'true'}
 :8: The variable _ can never match since previous clauses completely covered the type #{'__struct__':='Elixir.XSD.DateTime', 'uncanonical_lexical':='nil' | binary(), 'value':='nil' | #{'__struct__':='Elixir.DateTime' | 'Elixir.NaiveDateTime', 'calendar':=atom(), 'day':=pos_integer(), 'hour':=non_neg_integer(), 'microsecond':={_,_}, 'minute':=non_neg_integer(), 'month':=pos_integer(), 'second':=non_neg_integer(), 'year':=integer(), 'std_offset'=>integer(), 'time_zone'=>binary(), 'utc_offset'=>integer(), 'zone_abbr'=>binary()}}
 :8: The variable _ can never match since previous clauses completely covered the type #{'__struct__':='Elixir.XSD.Decimal', 'uncanonical_lexical':='nil' | binary(), 'value':='nil' | #{'__struct__':='Elixir.Decimal', 'coef':='inf' | 'qNaN' | 'sNaN' | non_neg_integer(), 'exp':=integer(), 'sign':=-1 | 1}}
 :9: The variable _ can never match since previous clauses completely covered the type #{'__struct__':='Elixir.XSD.Double', 'uncanonical_lexical':='nil' | binary(), 'value':='nan' | 'negative_infinity' | 'nil' | 'positive_infinity' | float()}
-:9: The variable _ can never match since previous clauses completely covered the type #{'__struct__':='Elixir.XSD.Integer', 'uncanonical_lexical':='nil' | binary(), 'value':='nil' | integer()}
+:11: The variable _ can never match since previous clauses completely covered the type #{'__struct__':='Elixir.XSD.Integer', 'uncanonical_lexical':='nil' | binary(), 'value':='nil' | integer()}

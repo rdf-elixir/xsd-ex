@@ -3,17 +3,11 @@ defmodule XSD.Literal do
   A generic interface to all `XSD.Datatype` struct implementations.
   """
 
-  @type t ::
-          XSD.Boolean.t()
-          | XSD.Integer.t()
-          | XSD.NonNegativeInteger.t()
-          | XSD.PositiveInteger.t()
-          | XSD.Double.t()
-          | XSD.String.t()
-          | XSD.Decimal.t()
-          | XSD.Date.t()
-          | XSD.Time.t()
-          | XSD.DateTime.t()
+  @type t :: %{
+          :__struct__ => XSD.Datatype.t(),
+          :value => any(),
+          :uncanonical_lexical => XSD.Datatype.uncanonical_lexical()
+        }
 
   @datatypes XSD.datatypes()
 
