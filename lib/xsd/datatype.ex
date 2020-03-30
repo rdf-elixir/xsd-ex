@@ -54,6 +54,8 @@ defmodule XSD.Datatype do
 
   @callback derived_from?(t()) :: boolean
 
+  @callback derived?(XSD.Literal.t()) :: boolean
+
   @callback applicable_facets :: MapSet.t(XSD.Facet.t())
 
   @doc """
@@ -170,6 +172,9 @@ defmodule XSD.Datatype do
         base = base()
         not is_nil(base) and base.derived_from?(datatype)
       end
+
+      @impl unquote(__MODULE__)
+      def derived?(literal), do: XSD.Literal.derived_from?(literal, __MODULE__)
 
       @spec new(any, Keyword.t()) :: t()
       def new(value, opts \\ [])

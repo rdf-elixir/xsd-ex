@@ -49,7 +49,7 @@ defmodule XSD.Datatype.Primitive do
 
       def cast(value) do
         if XSD.literal?(value) do
-          if XSD.Literal.derived_from?(value, __MODULE__) do
+          if derived?(value) do
             build_valid(value.value, value.uncanonical_lexical, [])
           end
         else
