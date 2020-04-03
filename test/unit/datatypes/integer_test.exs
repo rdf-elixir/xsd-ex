@@ -92,12 +92,16 @@ defmodule XSD.IntegerTest do
     end
   end
 
-  #  test "digit_count/1" do
-  #    assert XSD.Integer.digit_count(XSD.integer("2")) == 1
-  #    assert XSD.Integer.digit_count(XSD.integer("23")) == 2
-  #    assert XSD.Integer.digit_count(XSD.integer("023")) == 2
-  #    assert XSD.Integer.digit_count(XSD.integer("+023")) == 2
-  #    assert XSD.Integer.digit_count(XSD.integer("-023")) == 2
-  #    assert XSD.Integer.digit_count(XSD.integer("NaN")) == nil
-  #  end
+  test "digit_count/1" do
+    assert XSD.Integer.digit_count(XSD.integer("2")) == 1
+    assert XSD.Integer.digit_count(XSD.integer("23")) == 2
+    assert XSD.Integer.digit_count(XSD.integer("023")) == 2
+    assert XSD.Integer.digit_count(XSD.integer("+023")) == 2
+    assert XSD.Integer.digit_count(XSD.integer("-023")) == 2
+    assert XSD.Integer.digit_count(XSD.positive_integer("23")) == 2
+    assert XSD.Integer.digit_count(XSD.byte("00023")) == 2
+    assert XSD.Integer.digit_count(XSD.integer("NaN")) == nil
+    assert XSD.Integer.digit_count(XSD.positive_integer("-023")) == nil
+    assert XSD.Integer.digit_count(XSD.byte("12345")) == nil
+  end
 end

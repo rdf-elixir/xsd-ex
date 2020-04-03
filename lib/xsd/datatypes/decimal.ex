@@ -106,4 +106,55 @@ defmodule XSD.Decimal do
 
   @impl XSD.Datatype
   def compare(left, right), do: XSD.Numeric.compare(left, right)
+
+  @doc """
+  The number of digits in the XML Schema canonical form of the literal value.
+  """
+  @spec digit_count(XSD.Literal.t()) :: non_neg_integer | nil
+  def digit_count(%__MODULE__{} = literal), do: do_digit_count(literal)
+
+  def digit_count(literal) do
+    cond do
+      XSD.Integer.derived?(literal) -> XSD.Integer.digit_count(literal)
+      derived?(literal) -> do_digit_count(literal)
+      true -> nil
+    end
+  end
+
+  defp do_digit_count(%datatype{} = literal) do
+    if datatype.valid?(literal) do
+      literal
+      |> datatype.canonical()
+      |> datatype.lexical()
+      |> String.replace(".", "")
+      |> String.replace("-", "")
+      |> String.length()
+    end
+  end
+
+  @doc """
+  The number of digits to the right of the decimal point in the XML Schema canonical form of the literal value.
+  """
+  @spec fraction_digit_count(XSD.Literal.t()) :: non_neg_integer | nil
+  def fraction_digit_count(%__MODULE__{} = literal), do: do_fraction_digit_count(literal)
+
+  def fraction_digit_count(literal) do
+    cond do
+      XSD.Integer.derived?(literal) -> 0
+      derived?(literal) -> do_fraction_digit_count(literal)
+      true -> nil
+    end
+  end
+
+  defp do_fraction_digit_count(%datatype{} = literal) do
+    if datatype.valid?(literal) do
+      [_, fraction] =
+        literal
+        |> datatype.canonical()
+        |> datatype.lexical()
+        |> String.split(".")
+
+      String.length(fraction)
+    end
+  end
 end

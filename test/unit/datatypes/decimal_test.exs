@@ -127,31 +127,31 @@ defmodule XSD.DecimalTest do
     end
   end
 
-  #  test "digit_count/1" do
-  #    assert XSD.Decimal.digit_count(XSD.decimal("1.2345")) == 5
-  #    assert XSD.Decimal.digit_count(XSD.decimal("-1.2345")) == 5
-  #    assert XSD.Decimal.digit_count(XSD.decimal("+1.2345")) == 5
-  #    assert XSD.Decimal.digit_count(XSD.decimal("01.23450")) == 5
-  #    assert XSD.Decimal.digit_count(XSD.decimal("01.23450")) == 5
-  #    assert XSD.Decimal.digit_count(XSD.decimal("NAN")) == nil
-  #
-  #    assert XSD.Decimal.digit_count(XSD.integer("2")) == 1
-  #    assert XSD.Decimal.digit_count(XSD.integer("23")) == 2
-  #    assert XSD.Decimal.digit_count(XSD.integer("023")) == 2
-  #  end
-  #
-  #  test "fraction_digit_count/1" do
-  #    assert XSD.Decimal.fraction_digit_count(XSD.decimal("1.2345")) == 4
-  #    assert XSD.Decimal.fraction_digit_count(XSD.decimal("-1.2345")) == 4
-  #    assert XSD.Decimal.fraction_digit_count(XSD.decimal("+1.2345")) == 4
-  #    assert XSD.Decimal.fraction_digit_count(XSD.decimal("01.23450")) == 4
-  #    assert XSD.Decimal.fraction_digit_count(XSD.decimal("0.023450")) == 5
-  #    assert XSD.Decimal.fraction_digit_count(XSD.decimal("NAN")) == nil
-  #
-  #    assert XSD.Decimal.fraction_digit_count(XSD.integer("2")) == 0
-  #    assert XSD.Decimal.fraction_digit_count(XSD.integer("23")) == 0
-  #    assert XSD.Decimal.fraction_digit_count(XSD.integer("023")) == 0
-  #  end
+  test "digit_count/1" do
+    assert XSD.Decimal.digit_count(XSD.decimal("1.2345")) == 5
+    assert XSD.Decimal.digit_count(XSD.decimal("-1.2345")) == 5
+    assert XSD.Decimal.digit_count(XSD.decimal("+1.2345")) == 5
+    assert XSD.Decimal.digit_count(XSD.decimal("01.23450")) == 5
+    assert XSD.Decimal.digit_count(XSD.decimal("01.23450")) == 5
+    assert XSD.Decimal.digit_count(XSD.decimal("NAN")) == nil
+
+    assert XSD.Decimal.digit_count(XSD.integer("2")) == 1
+    assert XSD.Decimal.digit_count(XSD.integer("23")) == 2
+    assert XSD.Decimal.digit_count(XSD.integer("023")) == 2
+  end
+
+  test "fraction_digit_count/1" do
+    assert XSD.Decimal.fraction_digit_count(XSD.decimal("1.2345")) == 4
+    assert XSD.Decimal.fraction_digit_count(XSD.decimal("-1.2345")) == 4
+    assert XSD.Decimal.fraction_digit_count(XSD.decimal("+1.2345")) == 4
+    assert XSD.Decimal.fraction_digit_count(XSD.decimal("01.23450")) == 4
+    assert XSD.Decimal.fraction_digit_count(XSD.decimal("0.023450")) == 5
+    assert XSD.Decimal.fraction_digit_count(XSD.decimal("NAN")) == nil
+
+    assert XSD.Decimal.fraction_digit_count(XSD.integer("2")) == 0
+    assert XSD.Decimal.fraction_digit_count(XSD.integer("23")) == 0
+    assert XSD.Decimal.fraction_digit_count(XSD.integer("023")) == 0
+  end
 
   defmacrop sigil_d(str, _opts) do
     quote do

@@ -75,4 +75,18 @@ defmodule XSD.Integer do
 
   @impl XSD.Datatype
   def compare(left, right), do: XSD.Numeric.compare(left, right)
+
+  @doc """
+  The number of digits in the XML Schema canonical form of the literal value.
+  """
+  @spec digit_count(XSD.Literal.t()) :: non_neg_integer | nil
+  def digit_count(%datatype{} = literal) do
+    if derived?(literal) and datatype.valid?(literal) do
+      literal
+      |> datatype.canonical()
+      |> datatype.lexical()
+      |> String.replace("-", "")
+      |> String.length()
+    end
+  end
 end
