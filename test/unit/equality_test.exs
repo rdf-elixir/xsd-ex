@@ -352,6 +352,34 @@ defmodule XSD.EqualityTest do
     test "incomparability", do: assert_incomparable(@incomparable_times)
   end
 
+  describe "XSD.AnyURI" do
+    @term_equal_uris [
+      {XSD.any_uri("http://example.com"), XSD.any_uri("http://example.com")}
+    ]
+    @value_equal_uris []
+    @unequal_uris [
+      {XSD.any_uri("http://example.com"), XSD.any_uri("http://example.com#foo")}
+    ]
+    @equal_uris_by_coercion [
+      {XSD.any_uri("http://example.com"), URI.parse("http://example.com")}
+    ]
+    @unequal_uris_by_coercion [
+      {XSD.any_uri("http://example.com"), URI.parse("http://example.com#foo")}
+    ]
+    @incomparable_uris [
+      {XSD.any_uri("http://example.com"), 42},
+      {XSD.any_uri("http://example.com"), "http://example.com"},
+      {XSD.any_uri("http://example.com"), XSD.string("http://example.com")}
+    ]
+
+    test "term equality", do: assert_term_equal(@term_equal_uris)
+    test "value equality", do: assert_value_equal(@value_equal_uris)
+    test "inequality", do: assert_unequal(@unequal_uris)
+    test "coerced value equality", do: assert_coerced_equal(@equal_uris_by_coercion)
+    test "coerced value inequality", do: assert_coerced_unequal(@unequal_uris_by_coercion)
+    test "incomparability", do: assert_incomparable(@incomparable_uris)
+  end
+
   defp assert_term_equal(examples) do
     Enum.each(examples, fn example -> assert_comparable(example, true) end)
     Enum.each(examples, fn example -> assert_equality(example, true) end)

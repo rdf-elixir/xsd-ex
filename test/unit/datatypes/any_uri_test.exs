@@ -5,9 +5,10 @@ defmodule XSD.AnyURITest do
     primitive: true,
     valid: %{
       # input => { value, lexical, canonicalized }
-      "http://example.com/foo" => {"http://example.com/foo", nil, "http://example.com/foo"},
+      "http://example.com/foo" =>
+        {URI.parse("http://example.com/foo"), nil, "http://example.com/foo"},
       URI.parse("http://example.com/foo") =>
-        {"http://example.com/foo", nil, "http://example.com/foo"}
+        {URI.parse("http://example.com/foo"), nil, "http://example.com/foo"}
     },
     invalid: [42, 3.14, true, false]
 end

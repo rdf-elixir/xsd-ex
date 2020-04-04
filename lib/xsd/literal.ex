@@ -30,6 +30,7 @@ defmodule XSD.Literal do
   def coerce(%NaiveDateTime{} = datetime), do: XSD.DateTime.new(datetime)
   def coerce(%Date{} = date), do: XSD.Date.new(date)
   def coerce(%Time{} = time), do: XSD.Time.new(time)
+  def coerce(%URI{} = uri), do: XSD.AnyURI.new(uri)
   def coerce(%datatype{} = literal) when datatype in @datatypes, do: literal
   def coerce(_), do: nil
 

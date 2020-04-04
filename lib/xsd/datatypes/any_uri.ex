@@ -11,10 +11,10 @@ defmodule XSD.AnyURI do
 
   @impl XSD.Datatype
   @spec lexical_mapping(String.t(), Keyword.t()) :: valid_value
-  def lexical_mapping(lexical, _), do: to_string(lexical)
+  def lexical_mapping(lexical, _), do: URI.parse(lexical)
 
   @impl XSD.Datatype
   @spec elixir_mapping(any, Keyword.t()) :: value
-  def elixir_mapping(%URI{} = uri, _), do: URI.to_string(uri)
+  def elixir_mapping(%URI{} = uri, _), do: uri
   def elixir_mapping(_, _), do: @invalid_value
 end

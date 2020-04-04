@@ -89,6 +89,11 @@ defmodule XSD.LiteralTest do
                ~T"12:00:00" |> XSD.time()
     end
 
+    test "with URI" do
+      assert URI.parse("http://example.com") |> XSD.Literal.coerce() ==
+               XSD.any_uri("http://example.com")
+    end
+
     test "with XSD.Literals" do
       assert XSD.integer(42) |> XSD.Literal.coerce() == XSD.integer(42)
     end
