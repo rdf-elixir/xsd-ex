@@ -140,6 +140,7 @@ defmodule XSD.Datatype do
 
   defmacro __using__(opts) do
     name = Keyword.fetch!(opts, :name)
+    datatype_mod = __CALLER__.module
 
     quote do
       @behaviour XSD.Datatype
@@ -298,6 +299,12 @@ defmodule XSD.Datatype do
 
       @spec greater_than?(t, t) :: boolean
       def greater_than?(literal1, literal2), do: XSD.Literal.greater_than?(literal1, literal2)
+
+      defimpl String.Chars do
+        def to_string(literal) do
+          unquote(datatype_mod).lexical(literal)
+        end
+      end
     end
   end
 end

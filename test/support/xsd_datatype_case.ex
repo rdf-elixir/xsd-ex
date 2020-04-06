@@ -221,6 +221,13 @@ defmodule XSD.Datatype.Test.Case do
           end
         end)
       end
+
+      test "String.Chars protocol implementation" do
+        Enum.each(@valid, fn {input, _} ->
+          assert unquote(datatype).new(input) |> to_string() ==
+                   unquote(datatype).new(input) |> unquote(datatype).lexical()
+        end)
+      end
     end
   end
 
