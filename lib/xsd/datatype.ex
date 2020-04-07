@@ -108,6 +108,24 @@ defmodule XSD.Datatype do
   @callback compare(XSD.Literal.t(), XSD.Literal.t()) :: comparison_result | :indeterminate | nil
 
   @doc """
+  Matches the lexical form of the given `XSD.Datatype` literal against a XPath and XQuery regular expression pattern.
+
+  The regular expression language is defined in _XQuery 1.0 and XPath 2.0 Functions and Operators_.
+
+  see <https://www.w3.org/TR/xpath-functions/#func-matches>
+  """
+  @callback matches?(XSD.Literal.t(), pattern :: String.t()) :: boolean
+
+  @doc """
+  Matches the lexical form of the given `XSD.Datatype` literal against a XPath and XQuery regular expression pattern with flags.
+
+  The regular expression language is defined in _XQuery 1.0 and XPath 2.0 Functions and Operators_.
+
+  see <https://www.w3.org/TR/xpath-functions/#func-matches>
+  """
+  @callback matches?(XSD.Literal.t(), pattern :: String.t(), flags :: String.t()) :: boolean
+
+  @doc """
   A mapping from the lexical space of a `XSD.Datatype` into its value space.
   """
   @callback lexical_mapping(String.t(), Keyword.t()) :: any
@@ -299,6 +317,20 @@ defmodule XSD.Datatype do
 
       @spec greater_than?(t, t) :: boolean
       def greater_than?(literal1, literal2), do: XSD.Literal.greater_than?(literal1, literal2)
+
+      @doc """
+      Matches the string representation of the given value against a XPath and XQuery regular expression pattern.
+
+      The regular expression language is defined in _XQuery 1.0 and XPath 2.0 Functions and Operators_.
+
+      see <https://www.w3.org/TR/xpath-functions/#func-matches>
+      """
+      @impl XSD.Datatype
+      def matches?(%__MODULE__{} = literal, pattern, flags \\ "") do
+        literal
+        |> lexical()
+        |> XSD.Utils.Regex.matches?(pattern, flags)
+      end
 
       defimpl String.Chars do
         def to_string(literal) do

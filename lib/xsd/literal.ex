@@ -103,4 +103,16 @@ defmodule XSD.Literal do
     do: XSD.Datatype.comparable?(datatype1, datatype2)
 
   def comparable?(_, _), do: false
+
+  @doc """
+  Matches the string representation of the given value against a XPath and XQuery regular expression pattern.
+
+  The regular expression language is defined in _XQuery 1.0 and XPath 2.0 Functions and Operators_.
+
+  see <https://www.w3.org/TR/xpath-functions/#func-matches>
+  """
+  @spec matches?(t(), pattern :: String.t(), flags :: String.t()) :: boolean
+  def matches?(%datatype{} = literal, pattern, flags \\ "") do
+    datatype.matches?(literal, pattern, flags)
+  end
 end
