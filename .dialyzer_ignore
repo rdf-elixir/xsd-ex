@@ -9,6 +9,8 @@
 :9: The pattern {_@4, _@5} can never match the type integer()
 :11: The pattern {_@4, _@5} can never match the type integer()
 :10: The pattern {_@4, _@5} can never match the type binary()
+:10: The pattern {_@4, _@5} can never match the type #{'__struct__':='Elixir.URI', 'authority':='nil' | binary(), 'fragment':='nil' | binary(), 'host':='nil' | binary(), 'path':='nil' | binary(), 'port':='nil' | char(), 'query':='nil' | binary(), 'scheme':='nil' | binary(), 'userinfo':='nil' | binary()}
+:10: The pattern 'nil' can never match the type #{'__struct__':='Elixir.URI', 'authority':='nil' | binary(), 'fragment':='nil' | binary(), 'host':='nil' | binary(), 'path':='nil' | binary(), 'port':='nil' | char(), 'query':='nil' | binary(), 'scheme':='nil' | binary(), 'userinfo':='nil' | binary()}
 :8: Function build_invalid/2 will never be called
 :8: The pattern 'nil' can never match the type binary()
 :10: The pattern 'nil' can never match the type binary()
@@ -31,3 +33,4 @@
 :8: The variable _ can never match since previous clauses completely covered the type #{'__struct__':='Elixir.XSD.Decimal', 'uncanonical_lexical':='nil' | binary(), 'value':='nil' | #{'__struct__':='Elixir.Decimal', 'coef':='inf' | 'qNaN' | 'sNaN' | non_neg_integer(), 'exp':=integer(), 'sign':=-1 | 1}}
 :9: The variable _ can never match since previous clauses completely covered the type #{'__struct__':='Elixir.XSD.Double', 'uncanonical_lexical':='nil' | binary(), 'value':='nan' | 'negative_infinity' | 'nil' | 'positive_infinity' | float()}
 :11: The variable _ can never match since previous clauses completely covered the type #{'__struct__':='Elixir.XSD.Integer', 'uncanonical_lexical':='nil' | binary(), 'value':='nil' | integer()}
+:10: The variable _@3 can never match since previous clauses completely covered the type 'nil'

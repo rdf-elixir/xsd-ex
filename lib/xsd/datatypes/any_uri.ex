@@ -5,7 +5,7 @@ defmodule XSD.AnyURI do
   See: <http://www.w3.org/TR/xmlschema11-2/#anyURI>
   """
 
-  @type valid_value :: String.t()
+  @type valid_value :: URI.t()
 
   use XSD.Datatype.Primitive, name: "anyURI"
 
