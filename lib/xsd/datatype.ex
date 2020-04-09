@@ -158,7 +158,6 @@ defmodule XSD.Datatype do
 
   defmacro __using__(opts) do
     name = Keyword.fetch!(opts, :name)
-    datatype_mod = __CALLER__.module
 
     quote do
       @behaviour XSD.Datatype
@@ -332,9 +331,19 @@ defmodule XSD.Datatype do
         |> XSD.Utils.Regex.matches?(pattern, flags)
       end
 
+      defimpl Inspect do
+        def inspect(literal, _opts) do
+          "Elixir." <> datatype_name = to_string(literal.__struct__)
+
+          "%#{datatype_name}{value: #{inspect(literal.value)}, lexical: #{
+            literal |> literal.__struct__.lexical() |> inspect()
+          }}"
+        end
+      end
+
       defimpl String.Chars do
         def to_string(literal) do
-          unquote(datatype_mod).lexical(literal)
+          literal.__struct__.lexical(literal)
         end
       end
     end
