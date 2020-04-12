@@ -1,7 +1,7 @@
 defmodule XSD.UnsignedLongTest do
   use XSD.Datatype.Test.Case,
     datatype: XSD.UnsignedLong,
-    name: "unsigned_long",
+    name: "unsignedLong",
     base: XSD.NonNegativeInteger,
     base_primitive: XSD.Integer,
     comparable_datatypes: [XSD.Decimal, XSD.Double],

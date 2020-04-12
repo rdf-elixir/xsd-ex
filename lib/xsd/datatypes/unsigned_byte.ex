@@ -1,6 +1,6 @@
 defmodule XSD.UnsignedByte do
   use XSD.Datatype.Restriction,
-    name: "unsigned_byte",
+    name: "unsignedByte",
     base: XSD.UnsignedShort
 
   def_facet_constraint XSD.Facets.MinInclusive, 0

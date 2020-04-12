@@ -1,6 +1,6 @@
 defmodule XSD.UnsignedInt do
   use XSD.Datatype.Restriction,
-    name: "unsigned_int",
+    name: "unsignedInt",
     base: XSD.UnsignedLong
 
   def_facet_constraint XSD.Facets.MinInclusive, 0

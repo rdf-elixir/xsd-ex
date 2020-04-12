@@ -1,7 +1,7 @@
 defmodule XSD.NegativeIntegerTest do
   use XSD.Datatype.Test.Case,
     datatype: XSD.NegativeInteger,
-    name: "negative_integer",
+    name: "negativeInteger",
     base: XSD.NonPositiveInteger,
     base_primitive: XSD.Integer,
     comparable_datatypes: [XSD.Decimal, XSD.Double],
