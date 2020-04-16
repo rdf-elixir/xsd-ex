@@ -90,6 +90,14 @@ defmodule XSD.DateTime do
   def cast(literal_or_value), do: super(literal_or_value)
 
   @doc """
+  Builds a `XSD.DateTime` literal for current moment in time.
+  """
+  @spec now() :: t()
+  def now() do
+    new(DateTime.utc_now())
+  end
+
+  @doc """
   Extracts the timezone string from a `XSD.DateTime` value.
   """
   @spec tz(t()) :: String.t() | nil
