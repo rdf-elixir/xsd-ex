@@ -253,21 +253,13 @@ defmodule XSD.EqualityTest do
       {XSD.date("2002-04-02Z"), XSD.date("2002-04-02-00:00")}
     ]
     @unequal_dates [
-      {XSD.date("2002-04-01"), XSD.date("2002-04-02")},
-      {XSD.date("2002-04-03"), XSD.date("2002-04-02Z")},
-      {XSD.date("2002-04-03Z"), XSD.date("2002-04-02")},
-      {XSD.date("2002-04-03+00:00"), XSD.date("2002-04-02")},
-      {XSD.date("2002-04-03-00:00"), XSD.date("2002-04-02")}
+      {XSD.date("2002-04-01"), XSD.date("2002-04-02")}
     ]
     @equal_dates_by_coercion [
       {XSD.date("2002-04-02"), Date.from_iso8601!("2002-04-02")}
     ]
     @unequal_dates_by_coercion [
-      {XSD.date("2002-04-02"), Date.from_iso8601!("2002-04-03")},
-      {XSD.date("2002-04-03+01:00"), Date.from_iso8601!("2002-04-02")},
-      {XSD.date("2002-04-03Z"), Date.from_iso8601!("2002-04-02")},
-      {XSD.date("2002-04-03+00:00"), Date.from_iso8601!("2002-04-02")},
-      {XSD.date("2002-04-03-00:00"), Date.from_iso8601!("2002-04-02")}
+      {XSD.date("2002-04-02"), Date.from_iso8601!("2002-04-03")}
     ]
     @equal_invalid_dates [
       {XSD.date("foo"), XSD.date("foo")}
@@ -381,49 +373,42 @@ defmodule XSD.EqualityTest do
   end
 
   defp assert_term_equal(examples) do
-    Enum.each(examples, fn example -> assert_comparable(example, true) end)
     Enum.each(examples, fn example -> assert_equality(example, true) end)
     Enum.each(examples, fn example -> assert_term_equality(example, true) end)
     Enum.each(examples, fn example -> assert_value_equality(example, true) end)
   end
 
   defp assert_value_equal(examples) do
-    Enum.each(examples, fn example -> assert_comparable(example, true) end)
     Enum.each(examples, fn example -> assert_equality(example, false) end)
     Enum.each(examples, fn example -> assert_term_equality(example, false) end)
     Enum.each(examples, fn example -> assert_value_equality(example, true) end)
   end
 
   defp assert_unequal(examples) do
-    Enum.each(examples, fn example -> assert_comparable(example, true) end)
     Enum.each(examples, fn example -> assert_equality(example, false) end)
     Enum.each(examples, fn example -> assert_term_equality(example, false) end)
     Enum.each(examples, fn example -> assert_value_equality(example, false) end)
   end
 
   defp assert_coerced_equal(examples) do
-    Enum.each(examples, fn example -> assert_comparable(example, false) end)
     Enum.each(examples, fn example -> assert_equality(example, false) end)
     Enum.each(examples, fn example -> assert_term_equality(example, false) end)
     Enum.each(examples, fn example -> assert_value_equality(example, true) end)
   end
 
   defp assert_coerced_unequal(examples) do
-    Enum.each(examples, fn example -> assert_comparable(example, false) end)
     Enum.each(examples, fn example -> assert_equality(example, false) end)
     Enum.each(examples, fn example -> assert_term_equality(example, false) end)
     Enum.each(examples, fn example -> assert_value_equality(example, false) end)
   end
 
   def assert_equal_invalid(examples) do
-    Enum.each(examples, fn example -> assert_comparable(example, false) end)
     Enum.each(examples, fn example -> assert_equality(example, true) end)
     Enum.each(examples, fn example -> assert_term_equality(example, true) end)
     Enum.each(examples, fn example -> assert_value_equality(example, true) end)
   end
 
   def assert_unequal_invalid(examples) do
-    Enum.each(examples, fn example -> assert_comparable(example, false) end)
     Enum.each(examples, fn example -> assert_equality(example, false) end)
     Enum.each(examples, fn example -> assert_term_equality(example, false) end)
     Enum.each(examples, fn example -> assert_value_equality(example, false) end)
@@ -432,19 +417,7 @@ defmodule XSD.EqualityTest do
   defp assert_incomparable(examples) do
     Enum.each(examples, fn example -> assert_equality(example, false) end)
     Enum.each(examples, fn example -> assert_term_equality(example, false) end)
-    Enum.each(examples, fn example -> assert_value_equality(example, false) end)
-  end
-
-  defp assert_comparable({left, right}, expected) do
-    result = XSD.Literal.comparable?(left, right)
-
-    assert result == expected, """
-    expected XSD.Literal.comparable?(
-      #{inspect(left)},
-      #{inspect(right)})
-    to be:   #{inspect(expected)}
-    but got: #{inspect(result)}
-    """
+    Enum.each(examples, fn example -> assert_value_equality(example, nil) end)
   end
 
   defp assert_equality({left, right}, expected) do

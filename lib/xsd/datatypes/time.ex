@@ -168,6 +168,19 @@ defmodule XSD.Time do
 
   def cast(literal_or_value), do: super(literal_or_value)
 
+  @impl XSD.Datatype
+  def equal_value?(left, right)
+
+  def equal_value?(%__MODULE__{value: %_{}}, %__MODULE__{value: tz_tuple})
+      when is_tuple(tz_tuple),
+      do: nil
+
+  def equal_value?(%__MODULE__{value: tz_tuple}, %__MODULE__{value: %_{}})
+      when is_tuple(tz_tuple),
+      do: nil
+
+  def equal_value?(left, right), do: super(left, right)
+
   @doc """
   Extracts the timezone string from a `XSD.Time` value.
   """

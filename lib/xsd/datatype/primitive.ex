@@ -73,11 +73,11 @@ defmodule XSD.Datatype.Primitive do
 
       def equal_value?(left, right) do
         cond do
-          is_nil(left) -> false
-          is_nil(right) -> false
+          is_nil(left) -> nil
+          is_nil(right) -> nil
           not XSD.literal?(right) -> equal_value?(left, XSD.Literal.coerce(right))
           not XSD.literal?(left) -> equal_value?(XSD.Literal.coerce(left), right)
-          true -> false
+          true -> nil
         end
       end
 

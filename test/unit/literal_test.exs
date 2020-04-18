@@ -16,37 +16,6 @@ defmodule XSD.LiteralTest do
     assert XSD.positive_integer(42) |> XSD.Literal.derived_from?(XSD.NonNegativeInteger)
   end
 
-  describe "comparable?/2" do
-    test "valid and comparable by type" do
-      assert XSD.integer(42) |> XSD.Literal.comparable?(XSD.Integer)
-      assert XSD.integer(42) |> XSD.Literal.comparable?(XSD.integer(1))
-      assert XSD.positive_integer(1) |> XSD.Literal.comparable?(XSD.PositiveInteger)
-      assert XSD.positive_integer(1) |> XSD.Literal.comparable?(XSD.NonNegativeInteger)
-      assert XSD.positive_integer(1) |> XSD.Literal.comparable?(XSD.Integer)
-    end
-
-    test "valid but incomparable by type" do
-      refute XSD.integer(42) |> XSD.Literal.comparable?(XSD.String)
-      refute XSD.integer(42) |> XSD.Literal.comparable?(XSD.string("42"))
-      refute XSD.true() |> XSD.Literal.comparable?(XSD.String)
-      refute XSD.string("true") |> XSD.Literal.comparable?(XSD.Boolean)
-      refute XSD.true() |> XSD.Literal.comparable?(XSD.Integer)
-      refute XSD.true() |> XSD.Literal.comparable?(XSD.PositiveInteger)
-      refute XSD.integer(1) |> XSD.Literal.comparable?(XSD.Boolean)
-      refute XSD.positive_integer(1) |> XSD.Literal.comparable?(XSD.Boolean)
-    end
-
-    test "comparable by type but invalid" do
-      refute XSD.true() |> XSD.Literal.comparable?(XSD.integer("foo"))
-      refute XSD.integer("foo") |> XSD.Literal.comparable?(XSD.integer(1))
-      refute XSD.integer("foo") |> XSD.Literal.comparable?(XSD.Boolean)
-      refute XSD.positive_integer(0) |> XSD.Literal.comparable?(XSD.Boolean)
-      refute XSD.positive_integer(0) |> XSD.Literal.comparable?(XSD.PositiveInteger)
-      refute XSD.positive_integer(0) |> XSD.Literal.comparable?(XSD.NonNegativeInteger)
-      refute XSD.positive_integer(0) |> XSD.Literal.comparable?(XSD.Integer)
-    end
-  end
-
   describe "coerce/1" do
     test "with boolean" do
       assert XSD.Literal.coerce(true) == XSD.true()

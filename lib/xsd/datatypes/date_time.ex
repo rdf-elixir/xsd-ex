@@ -142,9 +142,11 @@ defmodule XSD.DateTime do
 
   def equal_value?(
         %__MODULE__{value: %type{} = value1},
-        %__MODULE__{value: %type{} = value2}
+        %__MODULE__{value: %other_type{} = value2}
       ) do
-    type.compare(value1, value2) == :eq
+    if type == other_type do
+      type.compare(value1, value2) == :eq
+    end
   end
 
   def equal_value?(
@@ -156,11 +158,11 @@ defmodule XSD.DateTime do
 
   def equal_value?(left, right) do
     cond do
-      is_nil(left) -> false
-      is_nil(right) -> false
+      is_nil(left) -> nil
+      is_nil(right) -> nil
       not XSD.literal?(left) -> equal_value?(XSD.Literal.coerce(left), right)
       not XSD.literal?(right) -> equal_value?(left, XSD.Literal.coerce(right))
-      true -> false
+      true -> nil
     end
   end
 

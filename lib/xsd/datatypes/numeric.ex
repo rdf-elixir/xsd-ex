@@ -83,15 +83,13 @@ defmodule XSD.Numeric do
       do: not is_nil(left) and not is_nil(right) and equal_decimal_value?(left, right)
 
   def equal_value?(%left_datatype{value: left}, %right_datatype{value: right}) do
-    XSD.datatype?(left_datatype) and
-      XSD.datatype?(right_datatype) and
-      left != :nan and
-      right != :nan and
-      left == right
+    if datatype?(left_datatype) and datatype?(right_datatype) do
+      left != :nan and right != :nan and left == right
+    end
   end
 
-  def equal_value?(nil, _), do: false
-  def equal_value?(_, nil), do: false
+  def equal_value?(nil, _), do: nil
+  def equal_value?(_, nil), do: nil
 
   def equal_value?(left, right),
     do: equal_value?(XSD.Literal.coerce(left), XSD.Literal.coerce(right))

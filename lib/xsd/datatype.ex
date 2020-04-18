@@ -16,19 +16,6 @@ defmodule XSD.Datatype do
   def derived_from?(datatype, super_datatype), do: datatype.derived_from?(super_datatype)
 
   @doc """
-  Checks if two `XSD.Datatype`s are comparable.
-  """
-  @spec comparable?(t(), t()) :: boolean
-  def comparable?(datatype1, datatype2)
-  def comparable?(datatype, datatype), do: true
-
-  def comparable?(datatype1, datatype2) do
-    XSD.datatype?(datatype1) and XSD.datatype?(datatype2) and
-      (derived_from?(datatype1, datatype2) or derived_from?(datatype2, datatype1) or
-         (XSD.Numeric.datatype?(datatype1) and XSD.Numeric.datatype?(datatype2)))
-  end
-
-  @doc """
   The IRI namespace of the `XSD.Datatype`.
 
   By default the XSD namespace `"http://www.w3.org/2001/XMLSchema#"` for primitive
@@ -84,7 +71,13 @@ defmodule XSD.Datatype do
   @doc """
   Checks if two `XSD.Datatype` literals are equal in terms of the values of their value space.
 
-  Non-`XSD.Datatype` literals are tried to be coerced via `RDF.Term.coerce/1` before comparison.
+  Non-`XSD.Datatype` literals are tried to be coerced via `XSD.Literal.coerce/1` before comparison.
+
+  Returns `nil` when the given arguments are not comparable as literals of this
+  datatype. This behaviour is particularly important for SPARQL.ex where this
+  function is used for the `=` operator, where comparisons between incomparable
+  terms are treated as errors and immediately leads to a rejection of a possible
+  match.
 
   The default implementation of the `_using__` macro compares the values of the
   `canonical/1` forms of the given literal of this datatype.
@@ -272,14 +265,7 @@ defmodule XSD.Datatype do
       end
 
       @impl unquote(__MODULE__)
-      @spec valid?(t() | any) :: boolean
-      def valid?(literal)
-      def valid?(%__MODULE__{value: @invalid_value}), do: false
-      def valid?(%__MODULE__{}), do: true
-      def valid?(_), do: false
-
-      defp validate_cast(%__MODULE__{} = literal), do: if(valid?(literal), do: literal)
-      defp validate_cast(_), do: nil
+      def value(%__MODULE__{} = literal), do: literal.value
 
       @impl unquote(__MODULE__)
       def lexical(lexical)
@@ -299,6 +285,23 @@ defmodule XSD.Datatype do
 
       def canonical(%__MODULE__{} = literal),
         do: %__MODULE__{literal | uncanonical_lexical: nil}
+
+      @impl unquote(__MODULE__)
+      def canonical?(literal)
+      def canonical?(%__MODULE__{uncanonical_lexical: nil}), do: true
+      def canonical?(%__MODULE__{}), do: false
+
+      @impl unquote(__MODULE__)
+      @spec valid?(t() | any) :: boolean
+      def valid?(literal)
+      def valid?(%__MODULE__{value: @invalid_value}), do: false
+      def valid?(%__MODULE__{}), do: true
+      def valid?(_), do: false
+
+      defp validate_cast(%__MODULE__{} = literal), do: if(valid?(literal), do: literal)
+      defp validate_cast(_), do: nil
+
+      # TODO: Should the following higher-level helper functions be part of the behaviour?
 
       def canonical_lexical(literal)
       def canonical_lexical(%__MODULE__{value: nil}), do: nil
