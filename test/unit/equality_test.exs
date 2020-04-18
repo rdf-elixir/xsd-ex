@@ -294,14 +294,43 @@ defmodule XSD.EqualityTest do
   end
 
   describe "equality between XSD.Date and XSD.DateTime" do
-    @incomparable_dates_and_datetimes [
-      {XSD.date("2002-04-02"), XSD.datetime("2002-04-02T00:00:00")},
+    # It seems quite strange that open-world test date-2 from the SPARQL 1.0 test suite
+    #  allows for equality comparisons between dates and datetimes, but disallows
+    #  ordering comparisons in the date-3 test.
+    #
+    #    @value_equal_dates_and_datetimes [
+    #      {XSD.date("2002-04-02"),       XSD.datetime("2002-04-02T00:00:00")},
+    #      {XSD.datetime("2002-04-02T00:00:00"), XSD.date("2002-04-02")},
+    #      {XSD.date("2002-04-02Z"),       XSD.datetime("2002-04-02T00:00:00Z")},
+    #      {XSD.datetime("2002-04-02T00:00:00Z"), XSD.date("2002-04-02Z")},
+    #      {XSD.date("2002-04-02Z"),       XSD.datetime("2002-04-02T00:00:00+00:00")},
+    #      {XSD.datetime("2002-04-02T00:00:00-00:00"), XSD.date("2002-04-02Z")},
+    #    ]
+    #    @value_unequal_dates_and_datetimes [
+    #      {XSD.date("2002-04-01"),       XSD.datetime("2002-04-02T00:00:00")},
+    #      {XSD.datetime("2002-04-01T00:00:00"), XSD.date("2002-04-02")},
+    #      {XSD.date("2002-04-01Z"),       XSD.datetime("2002-04-02T00:00:00Z")},
+    #      {XSD.datetime("2002-04-01T00:00:00Z"), XSD.date("2002-04-02Z")},
+    #      {XSD.date("2002-04-01Z"),       XSD.datetime("2002-04-02T00:00:00+00:00")},
+    #      {XSD.datetime("2002-04-01T00:00:00-00:00"), XSD.date("2002-04-02Z")},
+    #    ]
+    #    @incomparable_dates_and_datetimes [
+    #      {XSD.date("2002-04-02Z"),       XSD.datetime("2002-04-02T00:00:00")},
+    #      {XSD.datetime("2002-04-02T00:00:00Z"), XSD.date("2002-04-02")},
+    #      {XSD.date("2002-04-02"),       XSD.datetime("2002-04-02T00:00:00Z")},
+    #      {XSD.datetime("2002-04-02T00:00:00"), XSD.date("2002-04-02Z")},
+    #    ]
+    #
+    #    test "value equality",   do: assert_value_equal  @value_equal_dates_and_datetimes
+    #    test "value inequality", do: assert_value_unequal @value_unequal_dates_and_datetimes
+    #    test "incomparability",  do: assert_incomparable @incomparable_dates_and_datetimes
+
+    @value_unequal_dates_and_datetimes [
       {XSD.datetime("2002-04-02T00:00:00"), XSD.date("2002-04-02")},
-      {XSD.date("2002-04-01"), XSD.datetime("2002-04-02T00:00:00")},
-      {XSD.datetime("2002-04-01T00:00:00"), XSD.date("2002-04-02")}
+      {XSD.datetime("2002-04-02T00:00:00"), XSD.date("2002-04-01")}
     ]
 
-    test "incomparability", do: assert_incomparable(@incomparable_dates_and_datetimes)
+    test "value inequality", do: assert_unequal(@value_unequal_dates_and_datetimes)
   end
 
   describe "XSD.Time" do

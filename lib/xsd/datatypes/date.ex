@@ -160,6 +160,9 @@ defmodule XSD.Date do
     )
   end
 
+  def equal_value?(%__MODULE__{}, %XSD.DateTime{}), do: false
+  def equal_value?(%XSD.DateTime{}, %__MODULE__{}), do: false
+
   def equal_value?(left, right) do
     cond do
       is_nil(left) -> nil
@@ -189,6 +192,31 @@ defmodule XSD.Date do
       comparison_normalization(value2)
     )
   end
+
+  # It seems quite strange that open-world test date-2 from the SPARQL 1.0 test suite
+  #  allows for equality comparisons between dates and datetimes, but disallows
+  #  ordering comparisons in the date-3 test. The following implementation would allow
+  #  an ordering comparisons between date and datetimes.
+  #
+  #  def compare(
+  #        %__MODULE__{value: date_value},
+  #        %XSD.DateTime{} = datetime_literal
+  #      ) do
+  #    XSD.DateTime.compare(
+  #      comparison_normalization(date_value),
+  #      datetime_literal
+  #    )
+  #  end
+  #
+  #  def compare(
+  #        %XSD.DateTime{} = datetime_literal,
+  #        %__MODULE__{value: date_value}
+  #      ) do
+  #    XSD.DateTime.compare(
+  #      datetime_literal,
+  #      comparison_normalization(date_value)
+  #    )
+  #  end
 
   def compare(_, _), do: nil
 

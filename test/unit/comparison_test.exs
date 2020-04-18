@@ -144,6 +144,37 @@ defmodule XSD.ComparisonTest do
     end
   end
 
+  # It seems quite strange that open-world test date-2 from the SPARQL 1.0 test suite
+  #  allows for equality comparisons between dates and datetimes, but disallows
+  #  ordering comparisons in the date-3 test.
+  #
+  #  describe "comparisons XSD.DateTime between XSD.Date and XSD.DateTime" do
+  #    test "when unequal" do
+  #      # without timezone
+  #      assert_order({XSD.datetime("2000-01-14T00:00:00"), XSD.date("2000-02-15")})
+  #      assert_order({XSD.date("2000-01-15"), XSD.datetime("2000-01-15T00:00:01")})
+  #      # with timezone
+  #      assert_order({XSD.datetime("2000-01-14T00:00:00"), XSD.date("2000-02-15")})
+  #      assert_order({XSD.datetime("2000-01-14T00:00:00"), XSD.date("2000-02-15Z")})
+  #      assert_order({XSD.datetime("2000-01-14T00:00:00"), XSD.date("2000-02-15+01:00")})
+  #      assert_order({XSD.datetime("2000-01-14T00:00:00Z"), XSD.date("2000-02-15")})
+  #      assert_order({XSD.datetime("2000-01-14T00:00:00Z"), XSD.date("2000-02-15Z")})
+  #      assert_order({XSD.datetime("2000-01-14T00:00:00Z"), XSD.date("2000-02-15+01:00")})
+  #    end
+  #
+  #    test "when equal" do
+  #      assert_equal({XSD.datetime("2000-01-15T00:00:00"), XSD.date("2000-01-15")})
+  #      assert_equal({XSD.datetime("2000-01-15T00:00:00Z"), XSD.date("2000-01-15Z")})
+  #      assert_equal({XSD.datetime("2000-01-15T00:00:00Z"), XSD.date("2000-01-15+00:00")})
+  #      assert_equal({XSD.datetime("2000-01-15T00:00:00Z"), XSD.date("2000-01-15-00:00")})
+  #    end
+  #
+  #    test "when indeterminate" do
+  #      assert_indeterminate({XSD.datetime("2000-01-15T00:00:00"), XSD.date("2000-01-15Z")})
+  #      assert_indeterminate({XSD.datetime("2000-01-15T00:00:00Z"), XSD.date("2000-01-15")})
+  #    end
+  #  end
+
   describe "XSD.Time" do
     test "when unequal" do
       assert_order({XSD.time("12:00:00+01:00"), XSD.time("13:00:00+01:00")})

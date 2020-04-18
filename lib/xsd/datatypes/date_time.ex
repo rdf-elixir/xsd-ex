@@ -142,11 +142,9 @@ defmodule XSD.DateTime do
 
   def equal_value?(
         %__MODULE__{value: %type{} = value1},
-        %__MODULE__{value: %other_type{} = value2}
+        %__MODULE__{value: %type{} = value2}
       ) do
-    if type == other_type do
-      type.compare(value1, value2) == :eq
-    end
+    type.compare(value1, value2) == :eq
   end
 
   def equal_value?(
@@ -155,6 +153,23 @@ defmodule XSD.DateTime do
       ) do
     lexical1 == lexical2
   end
+
+  # This is another quirk for the open-world test date-2 from the SPARQL 1.0 test suite:
+  # comparisons between one date with tz and another one without a tz are incomparable
+  # when the unequal, but comparable and returning false when equal.
+  # What's the reasoning behind this madness?
+  def equal_value?(%__MODULE__{} = literal1, %__MODULE__{} = literal2) do
+    case compare(literal1, literal2) do
+      :lt -> false
+      :gt -> false
+      # This actually can't/shouldn't happen.
+      :eq -> true
+      _ -> nil
+    end
+  end
+
+  def equal_value?(%__MODULE__{}, %XSD.Date{}), do: false
+  def equal_value?(%XSD.Date{}, %__MODULE__{}), do: false
 
   def equal_value?(left, right) do
     cond do
@@ -175,6 +190,19 @@ defmodule XSD.DateTime do
       ) do
     type.compare(value1, value2)
   end
+
+  # It seems quite strange that open-world test date-2 from the SPARQL 1.0 test suite
+  #  allows for equality comparisons between dates and datetimes, but disallows
+  #  ordering comparisons in the date-3 test. The following implementation would allow
+  #  an ordering comparisons between date and datetimes.
+  #
+  #  def compare(%__MODULE__{} = literal1, %XSD.Date{} = literal2) do
+  #    XSD.Date.compare(literal1, literal2)
+  #  end
+  #
+  #  def compare(%XSD.Date{} = literal1, %__MODULE__{} = literal2) do
+  #    XSD.Date.compare(literal1, literal2)
+  #  end
 
   def compare(
         %__MODULE__{value: %DateTime{}} = left,
