@@ -35,6 +35,10 @@ defmodule XSD.Datatype.Test.Case do
           assert XSD.datatype_by_iri(unquote(datatype_iri)) == unquote(datatype)
         end
 
+        test "primitive/0" do
+          assert unquote(datatype).primitive?() == unquote(!!primitive)
+        end
+
         test "base/0" do
           if unquote(primitive) do
             assert unquote(datatype).base == nil

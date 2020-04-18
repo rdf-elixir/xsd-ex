@@ -170,10 +170,7 @@ defmodule XSD.Numeric do
   defp zero_value?(_), do: false
 
   @spec negative_zero?(any) :: boolean
-  def negative_zero?(%datatype{value: zero, uncanonical_lexical: "-" <> _})
-      when zero == 0 and datatype in [XSD.Double, XSD.Float],
-      do: true
-
+  def negative_zero?(%{value: zero, uncanonical_lexical: "-" <> _}) when zero == 0, do: true
   def negative_zero?(%{value: %D{sign: -1, coef: 0}}), do: true
   def negative_zero?(_), do: false
 

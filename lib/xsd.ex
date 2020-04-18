@@ -30,8 +30,8 @@ defmodule XSD do
   @doc """
   The list of all XSD datatypes.
   """
-  @spec datatypes() :: [XSD.Datatype.t()]
-  def datatypes(), do: Enum.to_list(@datatypes)
+  @spec datatypes() :: Enum.t()
+  def datatypes(), do: @datatypes
 
   def datatype_by_name(name), do: @datatypes_by_name[name]
   def datatype_by_iri(iri), do: @datatypes_by_iri[iri]

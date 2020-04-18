@@ -21,6 +21,9 @@ defmodule XSD.Datatype.Primitive do
       def target_namespace, do: unquote(@default_namespace)
 
       @impl XSD.Datatype
+      def primitive?, do: true
+
+      @impl XSD.Datatype
       def base, do: nil
 
       @impl XSD.Datatype
@@ -33,6 +36,10 @@ defmodule XSD.Datatype.Primitive do
 
       @impl XSD.Datatype
       def init_invalid_lexical(value, _opts), do: to_string(value)
+
+      @doc false
+      # Optimization: facets are generally unconstrained on primitives
+      def facet_conform?(_, _), do: true
 
       @impl XSD.Datatype
       def canonical_mapping(value), do: to_string(value)
@@ -82,7 +89,6 @@ defmodule XSD.Datatype.Primitive do
       end
 
       @impl XSD.Datatype
-      @spec compare(t, t) :: XSD.Datatype.comparison_result() | :indeterminate | nil
       def compare(left, right)
 
       def compare(
@@ -113,7 +119,7 @@ defmodule XSD.Datatype.Primitive do
   defmacro __before_compile__(_env) do
     quote do
       @impl XSD.Datatype
-      def applicable_facets, do: MapSet.new(@applicable_facets)
+      def applicable_facets, do: @applicable_facets
     end
   end
 end

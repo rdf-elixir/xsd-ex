@@ -9,7 +9,7 @@ defmodule XSD.Literal do
           :uncanonical_lexical => XSD.Datatype.uncanonical_lexical()
         }
 
-  @datatypes XSD.datatypes()
+  @datatypes Enum.to_list(XSD.datatypes())
 
   @spec base_primitive(t()) :: XSD.Datatype.t()
   def base_primitive(%datatype{}),

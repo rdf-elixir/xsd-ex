@@ -43,7 +43,7 @@ defmodule XSD.Datatype do
 
   @callback derived?(XSD.Literal.t()) :: boolean
 
-  @callback applicable_facets :: MapSet.t(XSD.Facet.t())
+  @callback applicable_facets :: [XSD.Facet.t()]
 
   @doc """
   Determines if the lexical form of a `XSD.Datatype` literal is a member of its lexical value space.
@@ -187,6 +187,11 @@ defmodule XSD.Datatype do
       @impl unquote(__MODULE__)
       def derived?(literal), do: XSD.Literal.derived_from?(literal, __MODULE__)
 
+      # Dialyzer causes a warning on all primitives since the facet_conform?/2 call
+      # always returns true there, so the other branch is unnecessary. This could
+      # be fixed by generating a special version for primitives, but it's not worth
+      # maintaining different versions of this function which must be kept in-sync.
+      @dialyzer {:nowarn_function, new: 2}
       @spec new(any, Keyword.t()) :: t()
       def new(value, opts \\ [])
 
@@ -255,13 +260,6 @@ defmodule XSD.Datatype do
 
       defp build_invalid(lexical, opts) do
         %__MODULE__{uncanonical_lexical: init_invalid_lexical(lexical, opts)}
-      end
-
-      @doc false
-      def facet_conform?(value, lexical) do
-        Enum.all?(applicable_facets(), fn facet ->
-          facet.conform?(__MODULE__, value, lexical)
-        end)
       end
 
       @impl unquote(__MODULE__)

@@ -23,6 +23,9 @@ defmodule XSD.Datatype.Restriction do
       end
 
       @impl XSD.Datatype
+      def primitive?, do: false
+
+      @impl XSD.Datatype
       def base_primitive, do: @base.base_primitive()
 
       @impl XSD.Datatype
@@ -35,6 +38,13 @@ defmodule XSD.Datatype.Restriction do
       @impl XSD.Datatype
       def init_invalid_lexical(value, opts),
         do: @base.init_invalid_lexical(value, opts)
+
+      @doc false
+      def facet_conform?(value, lexical) do
+        Enum.all?(applicable_facets(), fn facet ->
+          facet.conform?(__MODULE__, value, lexical)
+        end)
+      end
 
       @impl XSD.Datatype
       def lexical_mapping(lexical, opts),
