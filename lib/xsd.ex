@@ -33,8 +33,25 @@ defmodule XSD do
   @spec datatypes() :: Enum.t()
   def datatypes(), do: @datatypes
 
+  def datatype_by_name(name) when is_atom(name), do: @datatypes_by_name[to_string(name)]
   def datatype_by_name(name), do: @datatypes_by_name[name]
   def datatype_by_iri(iri), do: @datatypes_by_iri[iri]
+
+  @facets [
+    XSD.Facets.MinInclusive,
+    XSD.Facets.MaxInclusive
+  ]
+
+  @facets_by_name Map.new(@facets, fn facet -> {facet.name(), facet} end)
+
+  @doc """
+  The list of all XSD facets.
+  """
+  @spec facets() :: Enum.t()
+  def facets(), do: @facets
+
+  def facet(name) when is_atom(name), do: @facets_by_name[to_string(name)]
+  def facet(name), do: @facets_by_name[name]
 
   @doc """
   Returns if a given datatype is a XSD datatype.
