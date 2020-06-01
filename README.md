@@ -1,21 +1,7 @@
-# XSD
+## Abandoned XSD.ex
 
-**TODO: Add description**
+This was an attempt to extract the implementation of the [XML Schema 1.1. Datatypes](https://www.w3.org/TR/xmlschema11-2/) in Elixir fom RDF.ex.
 
-## Installation
+It made the implementation of the literal system in RDF.ex much more complex, which didn't seem worth the effort, so the code was brought back.
 
-If [available in Hex](https://hex.pm/docs/publish), the package can be installed
-by adding `xsd` to your list of dependencies in `mix.exs`:
-
-```elixir
-def deps do
-  [
-    {:xsd, "~> 0.1.0"}
-  ]
-end
-```
-
-Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_doc)
-and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
-be found at [https://hexdocs.pm/xsd](https://hexdocs.pm/xsd).
-
+This repo is just for archival purposes.
