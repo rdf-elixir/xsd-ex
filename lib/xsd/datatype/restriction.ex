@@ -70,7 +70,7 @@ defmodule XSD.Datatype.Restriction do
         # Note: This direct call of the cast/1 implementation of the base_primitive
         # is an optimization to not have go through the whole derivation chain and
         # doing potentially a lot of redundant validations, but this relies on
-        # cast/1 not being overridden on restriction.
+        # cast/1 not being overridden on restrictions.
         case base_primitive().cast(literal_or_value) do
           nil ->
             nil

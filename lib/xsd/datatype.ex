@@ -1,6 +1,33 @@
+# CAUTION:
+# This behaviour shares some functions with the RDF.Literal.Datatype behaviour,
+# which must be kept in-sync.
+
 defmodule XSD.Datatype do
   @moduledoc """
   The behaviour of all XSD datatypes.
+
+  A XSD datatype has three properties:
+
+  - A _value space_, which is a set of values.
+  - A _lexical space_, which is a set of _literals_ used to denote the values.
+  - A small collection of functions associated with the datatype.
+
+  This behaviour is implemented on structs for the literals of the defined datatypes.
+  This means the struct values represent a literal
+
+  The small collection of functions associated with the datatype include
+
+  - an equality relation for its value space via the `equal_value?/2` function
+    (as opposed to the term equality function `XSD.Literal.equal?/2` function over
+    the _lexical space_ of literals)
+  - optionally order relations on the _value space_
+  - a canonical form ...
+
+  - and a _lexical mapping_, which is a mapping from the _lexical space_ into
+    the _value space_
+
+  A `XSD.Datatype` implements the foundational functions for the lexical form,
+  the validation, conversion and canonicalization of typed `RDF.Literal`s.
   """
 
   @type t :: module
@@ -9,7 +36,7 @@ defmodule XSD.Datatype do
 
   @type comparison_result :: :lt | :gt | :eq
 
-  @spec base_primitive(t()) :: XSD.Datatype.t()
+  @spec base_primitive(t()) :: t()
   def base_primitive(datatype), do: datatype.base_primitive()
 
   @spec derived_from?(t(), t()) :: boolean
@@ -35,23 +62,49 @@ defmodule XSD.Datatype do
   """
   @callback id :: String.t()
 
+  @doc """
+  Returns if the `XSD.Datatype` is a primitive datatype.
+  """
+  @callback primitive?() :: boolean
+
+  @doc """
+  The base datatype from which a `XSD.Datatype` is derived.
+
+  Note: Since this library focuses on atomic types and the special `xsd:anyAtomicType`
+  specified as the base type of all primitive types in the W3C spec wouldn't serve any
+  purpose here, all primitive datatypes just return `nil`.
+  """
   @callback base :: t() | nil
 
+  @doc """
+  The primitive `XSD.Datatype` from which a `XSD.Datatype` is derived.
+
+  In case of a primitive `XSD.Datatype` this function returns the this `XSD.Datatype` itself.
+  """
   @callback base_primitive :: t()
 
+  @doc """
+  Checks if a `XSD.Datatype` is directly or indirectly derived from another `XSD.Datatype`.
+  """
   @callback derived_from?(t()) :: boolean
 
+  @doc """
+  Checks if the datatype of a given literal is derived from a `XSD.Datatype`.
+  """
   @callback derived?(XSD.Literal.t()) :: boolean
 
+  @doc """
+  The set of applicable facets of a `XSD.Datatype`.
+  """
   @callback applicable_facets :: [XSD.Facet.t()]
 
   @doc """
-  Determines if the lexical form of a `XSD.Datatype` literal is a member of its lexical value space.
+  Returns the value of a `XSD.Datatype` literal.
   """
-  @callback valid?(XSD.Literal.t() | any) :: boolean
+  @callback value(XSD.Literal.t()) :: any
 
   @doc """
-  Returns the lexical form of a `XSD.Datatype` value.
+  Returns the lexical form of a `XSD.Datatype` literal.
   """
   @callback lexical(XSD.Literal.t()) :: String.t()
 
@@ -59,6 +112,16 @@ defmodule XSD.Datatype do
   Produces the canonical representation of a `XSD.Datatype` literal.
   """
   @callback canonical(XSD.Literal.t()) :: XSD.Literal.t()
+
+  @doc """
+  Determines if the lexical form of a `XSD.Datatype` literal is the canonical form.
+  """
+  @callback canonical?(XSD.Literal.t()) :: boolean
+
+  @doc """
+  Determines if the lexical form of a `XSD.Datatype` literal is a member of its lexical value space.
+  """
+  @callback valid?(XSD.Literal.t() | any) :: boolean
 
   @doc """
   Casts a `XSD.Datatype` literal or coercible value of one type into a `XSD.Datatype` literal of another type.
@@ -98,7 +161,8 @@ defmodule XSD.Datatype do
   The default implementation of the `_using__` macro compares the values of the
   `canonical/1` forms of the given literals of this datatype.
   """
-  @callback compare(XSD.Literal.t(), XSD.Literal.t()) :: comparison_result | :indeterminate | nil
+  @callback compare(XSD.Literal.t() | any, XSD.Literal.t() | any) ::
+              comparison_result | :indeterminate | nil
 
   @doc """
   Matches the lexical form of the given `XSD.Datatype` literal against a XPath and XQuery regular expression pattern.
@@ -125,6 +189,17 @@ defmodule XSD.Datatype do
 
   @doc """
   A mapping from Elixir values into the value space of a `XSD.Datatype`.
+
+  If the Elixir mapping for the given value can not be mapped into value space of
+  the XSD datatype an implementation should return `@invalid_value`
+  (which is just `nil` at the moment, so `nil` is never a valid value of a value space).
+
+  Otherwise a tuple `{value, lexical}` with `value` being the internal representation
+  of the mapped value from the value space and `lexical` being the lexical representation
+  to be used for the Elixir value or `nil` if `init_valid_lexical/3` should be used
+  to determine the lexical form in general (i.e. also when initialized with a string
+  via the `lexical_mapping/2`). Since the later case is most often what you want,
+  you can also return `value` directly, as long as it is not a two element tuple.
   """
   @callback elixir_mapping(any, Keyword.t()) :: any | {any, uncanonical_lexical}
 
@@ -135,6 +210,16 @@ defmodule XSD.Datatype do
 
   @doc """
   Produces the lexical representation to be used as for a `XSD.Datatype` literal.
+
+  By default the lexical representation of a `XSD.Datatype` is either the
+  canonical form in case it is created from a non-string Elixir value or, if it
+  is created from a string, just with that string as the lexical form.
+
+  But there can be various reasons for why this should be different for certain
+  datatypes. For example, for `XSD.Double`s given as Elixir floats, we want the
+  default lexical representation to be the decimal and not the canonical
+  exponential form. Another reason might be that additional options are given
+  which should be taken into account in the lexical form.
 
   If the lexical representation for a given `value` and `lexical` should be the
   canonical one, an implementation should return `nil`.
@@ -151,6 +236,7 @@ defmodule XSD.Datatype do
 
   defmacro __using__(opts) do
     name = Keyword.fetch!(opts, :name)
+    id = Keyword.get(opts, :id)
 
     quote do
       @behaviour XSD.Datatype
@@ -172,7 +258,11 @@ defmodule XSD.Datatype do
       def name, do: @name
 
       @impl unquote(__MODULE__)
-      def id, do: target_namespace() <> name()
+      if unquote(id) do
+        def id, do: unquote(id)
+      else
+        def id, do: target_namespace() <> name()
+      end
 
       @impl unquote(__MODULE__)
       def derived_from?(datatype)

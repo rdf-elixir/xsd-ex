@@ -1,4 +1,12 @@
 defmodule XSD.Facet do
+  @moduledoc """
+  The meta-behaviour for the XSD constraining facet behaviours.
+
+  Every `XSD.Datatype.Primitive` defines a set of applicable constraining facets, ...
+
+  <https://www.w3.org/TR/2012/REC-xmlschema11-2-20120405/datatypes.html#rf-facets>
+  """
+
   @type t :: module
 
   @doc """
